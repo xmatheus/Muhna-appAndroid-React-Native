@@ -1,0 +1,4 @@
+#Sat Apr 27 21:48:48 AMT 2019
+base.0=/home/matheus/Documents/Projetos/ReactNative/Rocktseat/React-native/App/android/app/build/intermediates/transforms/dexMerger/debug/0
+renamed.0=classes.dex
+path.0=classes.dex
