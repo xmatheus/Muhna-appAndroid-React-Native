@@ -1,6 +1,6 @@
 import React, { Component} from 'react';
 import api from '../services/api';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image} from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image, AsyncStorage , ToastAndroid} from 'react-native';
 
 // import Slideshow from 'react-native-image-slider-show';
 import Slideshow from './components/Slideshow'
@@ -30,12 +30,33 @@ export default class Main extends Component{
     componentDidMount() {
         this.loadProducts();
     }
-
-    loadProducts = async () => {
-        const response = await api.get('/news/show');
-
-        const { docs } = response.data;
+    
+    // loadProducts = async () => {
         
+    //     const response = await api.get('/news/show');
+
+    //     const { docs } = response.data;
+        
+    //     const doc = await Promise.all(docs.map(async (file) => {
+            
+    //         let resposta = await api.get('/image/news?newsid='+file._id+'');
+    //         let data = resposta.data
+
+            
+    //         const dataSource = data.map((data) => {
+    //             return {url:api.defaults.baseURL+'/image/name?filename='+data+''}
+    //         })
+            
+    //         file.dataSource= dataSource
+            
+    //         return file
+                  
+    //     }))
+
+    //     this.setState({docs:doc});
+    // };
+    loadImage = async (docs) =>{
+        // console.error("AQUI", docs)
         const doc = await Promise.all(docs.map(async (file) => {
             
             let resposta = await api.get('/image/news?newsid='+file._id+'');
@@ -51,32 +72,54 @@ export default class Main extends Component{
             return file
                   
         }))
-        // docs.uri = await api.get('/image/news?newsid='+id);
-        
+
+        await AsyncStorage.setItem('docs',await JSON.stringify(doc));       //caso fique sem net, ele salva o ultimo estado
 
         this.setState({docs:doc});
+    }
+
+ 
+    loadProducts = async () => {
+        
+        try {
+            const response = await api.get('/news/show');
+            const { docs } = response.data;
+
+            this.loadImage(docs)
+        } catch (error) {
+            const otherDocs = await JSON.parse(await AsyncStorage.getItem('docs'))
+            if(otherDocs !== null){
+                this.setState({docs:otherDocs})
+            }
+            else{
+                ToastAndroid.show("not connected to the internet",ToastAndroid.SHORT)
+            }
+        }
+              
+        
     };
 
 
     verifylenght= (frase) => {
+        
         if(frase.length > this.state.lenghResume){
             return frase.slice(0,this.state.lenghResume)+'...'
         }
         return frase
     }
 
-    renderItem = ({ item }) => (
+    renderItem = ( { item } ) => (
         
-        <View style={styles.productContainer}>
-            <Text style={styles.productTitle}>{item.title}</Text>
-            <View style={styles.container2}>
+        <View style = { styles.productContainer }>
+            <Text style = { styles.productTitle }>{ item.title }</Text>
+            <View style = { styles.container2 }>
                 <Slideshow
-                    dataSource={item.dataSource}
+                    dataSource = { item.dataSource }
                 />
             </View> 
-            <Text style={styles.productDescription}>{this.verifylenght(item.resume)} </Text>
-            <TouchableOpacity  style={styles.productButton}onPress={() => {  this.props.navigation.navigate('pag',{item:item})}}>
-                <Text style={styles.productButtonText}>Acessar</Text>
+            <Text style = { styles.productDescription }>{ this.verifylenght( item.resume ) } </Text>
+            <TouchableOpacity  style={styles.productButton}onPress={ () => {  this.props.navigation.navigate( 'pag',{item:item} ) } }>
+                <Text style = { styles.productButtonText }>Acessar</Text>
             </TouchableOpacity>
         </View>
     );
