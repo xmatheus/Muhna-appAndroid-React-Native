@@ -1,7 +1,8 @@
 import { createStackNavigator} from 'react-navigation';
 // import {Image} from 'react-native'
 
-import Main from './pages/main.js';
+// import Main from './pages/main.js';
+import Main from './pages/mainPlaceHolder';
 import pag from './pages/Pagnews'
 
 export default createStackNavigator({

@@ -31,30 +31,7 @@ export default class Main extends Component{
         this.loadProducts();
     }
     
-    // loadProducts = async () => {
-        
-    //     const response = await api.get('/news/show');
 
-    //     const { docs } = response.data;
-        
-    //     const doc = await Promise.all(docs.map(async (file) => {
-            
-    //         let resposta = await api.get('/image/news?newsid='+file._id+'');
-    //         let data = resposta.data
-
-            
-    //         const dataSource = data.map((data) => {
-    //             return {url:api.defaults.baseURL+'/image/name?filename='+data+''}
-    //         })
-            
-    //         file.dataSource= dataSource
-            
-    //         return file
-                  
-    //     }))
-
-    //     this.setState({docs:doc});
-    // };
     loadImage = async (docs) =>{
         // console.error("AQUI", docs)
         const doc = await Promise.all(docs.map(async (file) => {
@@ -90,6 +67,7 @@ export default class Main extends Component{
             const otherDocs = await JSON.parse(await AsyncStorage.getItem('docs'))
             if(otherDocs !== null){
                 this.setState({docs:otherDocs})
+                ToastAndroid.show("not connected to the internet",ToastAndroid.SHORT)
             }
             else{
                 ToastAndroid.show("not connected to the internet",ToastAndroid.SHORT)

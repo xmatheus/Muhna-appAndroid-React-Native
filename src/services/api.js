@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://192.168.1.13:3000' //api REST using NODE JS
+    baseURL: 'https://muhna-api.herokuapp.com' //api REST using NODE JS
 });
 
 export default api;
