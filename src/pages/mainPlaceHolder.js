@@ -79,7 +79,7 @@ export default class Main extends Component{
 
         await AsyncStorage.setItem('docs',await JSON.stringify(doc));       //caso fique sem net, ele salva o ultimo estado
 
-        this.setState({docs:doc});
+        this.setState({docs:doc},()=>{this.setState({ visible: true })});
         
     }
 
@@ -87,8 +87,8 @@ export default class Main extends Component{
     loadProducts = async () => {
         
         try {
-            const response = await api.get('/news/show');
-            setTimeout(() => this.setState({ visible: true }), 1500);       
+            const response = await api.get('/news/show');//erro aqui
+            // setTimeout(() => this.setState({ visible: true }), 1500);       
             const { docs } = response.data;
             this.loadImage(docs)
         } catch (error) {
@@ -139,7 +139,7 @@ export default class Main extends Component{
     );
     
     fakeLoad(qtd){
-        
+        const visible = true
         if(this.state.visible === false){ 
             const vetor = []
             for(let i = 0; i < qtd; i++){
@@ -148,7 +148,9 @@ export default class Main extends Component{
                         <ShimmerPlaceHolder
                             style={styles.productTitleFake}
                             autoRun = {true} 
-                            visible = {true}
+                            visible = {this.state.visible}
+                            colorShimmer={['#e4e4e0', '#c2c2be', '#8a8a87']}
+                            
                         >
                             <Text style = { styles.productTitle }>{ }</Text>
                         </ShimmerPlaceHolder>
@@ -156,6 +158,7 @@ export default class Main extends Component{
                             style={styles.container2Fake}
                             autoRun = {true} 
                             visible = {this.state.visible}
+                            colorShimmer={['#ebebeb', '#c5c5c5', '#ebebeb']}
                         >
                             <View style = { styles.container2 }>
                                 
@@ -165,18 +168,15 @@ export default class Main extends Component{
                             style={styles.productDescriptionFake}
                             autoRun = {true} 
                             visible = {this.state.visible}
+                            
                         >
                             <Text style = { styles.productDescription }>{ } </Text>
                         </ShimmerPlaceHolder>
-                        <ShimmerPlaceHolder
-                            style={styles.productButtonFake}
-                            autoRun = {true} 
-                            visible = {true}
-                        >
+
                         <TouchableOpacity  style={styles.productButton}onPress={ () => { } }>
                             <Text style = { styles.productButtonText }>Acessar</Text>
                         </TouchableOpacity>
-                        </ShimmerPlaceHolder>                
+                                        
                     </View>
                 )
             }
@@ -193,14 +193,6 @@ export default class Main extends Component{
         return(
             
             <View style={styles.container}>
-                {/* <Animatable.View
-                    animation='fadeOut'
-                    duration={3250}
-                    useNativeDriver={true}
-                    // onAnimationEnd={() => {this.setState({visible:true})}}
-                >
-                    {this.fakeLoad(3)}
-                </Animatable.View> */}
                 {this.fakeLoad(3)}
                 <FlatList
                     contentContainerStyle={styles.list}
@@ -216,6 +208,7 @@ export default class Main extends Component{
 }
 
 const styles = StyleSheet.create({
+    
     container: {
         flex:1,
         backgroundColor:'#d9d9d9'//'#fafafa'
@@ -276,7 +269,7 @@ const styles = StyleSheet.create({
     productDescription:{
         fontSize:16,
         textAlign: 'center',
-        color:'#999',
+        color:'#767474',//'#999',
         marginTop:5,
         lineHeight:24
     },

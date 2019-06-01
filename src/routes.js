@@ -25,7 +25,8 @@ export default createStackNavigator({
             textAlign: "left",
             color: 	'#321a01',//'#4d2800',
             flex: 1,
-            paddingLeft:40
+            paddingLeft:40,
+            justifyContent:'flex-end'
         },
         headerTintColor: "#000"
     },
