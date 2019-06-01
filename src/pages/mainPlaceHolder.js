@@ -6,6 +6,7 @@ import Slideshow from './components/Slideshow'
 import * as Animatable from 'react-native-animatable';
 
 
+
 const widthPercentageToDP = widthPercent => {
   const screenWidth = Dimensions.get('window').width;
   return PixelRatio.roundToNearestPixel(screenWidth * parseFloat(widthPercent) / 100);
@@ -16,11 +17,6 @@ const heightPercentageToDP = heightPercent => {
 return PixelRatio.roundToNearestPixel(screenHeight * parseFloat(heightPercent) / 100);
 };
 
-// // Estilizando uma View com os métodos acima
-// const Tile = styled.View`
-//   width: ${widthPercentageToDP('98%')};
-//   height: ${heightPercentageToDP('10%')};
-// `;
 
 const ActionBarImage = () => { //logo do museu na action bar
     return(
@@ -51,13 +47,6 @@ export default class Main extends Component{
         postImageVisible: false,
         internet:true
     };
-    // componentDidMount () {
-    //     if(this.state.internet === true){
-    //         setTimeout(() => this.setState({ visible: true }), 3500);       
-    //     }else{
-    //         setTimeout(() => this.setState({ visible: true }), 140);
-    //     }
-    // }
 
     loadImage = async (docs) =>{
         // console.error("AQUI", docs)
@@ -84,14 +73,13 @@ export default class Main extends Component{
     }
 
  
-    loadProducts = async () => {
-        
+    loadProducts = async () => { //req das noticias utilizando a API
+        // console.warn("LoadProcucts")
         try {
-            const response = await api.get('/news/show');//erro aqui
-            // setTimeout(() => this.setState({ visible: true }), 1500);       
+            const response = await api.get('/news/show');    
             const { docs } = response.data;
             this.loadImage(docs)
-        } catch (error) {
+        } catch (error) { //se deu erro, pega do async storage e tira o skeleton 
             const otherDocs = await JSON.parse(await AsyncStorage.getItem('docs'))
             if(otherDocs !== null){
                 this.setState({ visible: true });
@@ -106,7 +94,7 @@ export default class Main extends Component{
     };
 
 
-    verifylenght= (frase) => {
+    verifylenght= (frase) => { //corta a frase do resumo a uma quantidade de caracteres definidos
         
         if(frase.length > this.state.lenghResume){
             return frase.slice(0,this.state.lenghResume)+'...'
@@ -115,7 +103,7 @@ export default class Main extends Component{
     }
 
 
-    renderItem = ( { item } ) => (
+    renderItem = ( { item } ) => ( //rendereiza os items baixados da API
         <Animatable.View
             animation='fadeIn'
             duration={2500}
@@ -138,7 +126,7 @@ export default class Main extends Component{
         
     );
     
-    fakeLoad(qtd){
+    fakeLoad(qtd){//skeleton para aliviar o stress do usuario com a demora do download
         const visible = true
         if(this.state.visible === false){ 
             const vetor = []
@@ -149,7 +137,7 @@ export default class Main extends Component{
                             style={styles.productTitleFake}
                             autoRun = {true} 
                             visible = {this.state.visible}
-                            colorShimmer={['#e4e4e0', '#c2c2be', '#8a8a87']}
+                            
                             
                         >
                             <Text style = { styles.productTitle }>{ }</Text>
@@ -158,7 +146,7 @@ export default class Main extends Component{
                             style={styles.container2Fake}
                             autoRun = {true} 
                             visible = {this.state.visible}
-                            colorShimmer={['#ebebeb', '#c5c5c5', '#ebebeb']}
+                            
                         >
                             <View style = { styles.container2 }>
                                 
@@ -199,7 +187,8 @@ export default class Main extends Component{
                     data = {this.state.docs}
                     keyExtractor = {item => item._id}
                     renderItem = {this.renderItem}
-            
+                    refreshing={false}
+                    onRefresh = {this.loadProducts}
                 />
                
             </View>
