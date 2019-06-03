@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/home/matheus/Documents/Projetos/ReactNative/Rocktseat/React-native/Muhna-news/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-ne/values-ne.xml",
+            "outputFile": "/home/matheus/Documents/Projetos/ReactNative/Muhna-news/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-ne/values-ne.xml",
             "map": [
                 {
                     "source": "/home/matheus/.gradle/caches/transforms-1/files-1.1/appcompat-v7-28.0.0.aar/38528aa7bf59b569017b874cb42767f9/res/values-ne/values-ne.xml",
