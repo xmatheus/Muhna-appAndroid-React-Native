@@ -1,4 +1,0 @@
-#Mon Jun 03 09:26:28 AMT 2019
-base.0=/home/matheus/Documents/Projetos/ReactNative/Muhna-news/android/app/build/intermediates/transforms/dexMerger/debug/0
-path.0=classes.dex
-renamed.0=classes.dex
