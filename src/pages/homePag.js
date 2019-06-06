@@ -43,9 +43,10 @@ export default class Main extends Component{
         docs: [],
         lenghResume:225,
         visible: false,
-        userImageVisible: false,
-        postImageVisible: false,
-        internet:true
+		page:1,
+		pageInfo: {},
+		refreshing:false
+
     };
 
     loadImage = async (docs) =>{
@@ -65,20 +66,23 @@ export default class Main extends Component{
             return file
                   
         }))
-
-        await AsyncStorage.setItem('docs',await JSON.stringify(doc));       //caso fique sem net, ele salva o ultimo estado
+		if(this.state.page <= 2){
+			await AsyncStorage.setItem('docs',await JSON.stringify(doc));       //caso fique sem net, ele salva o ultimo estado
+		}
 
         this.setState({docs:doc},()=>{this.setState({ visible: true })});
         
     }
 
  
-    loadProducts = async () => { //req das noticias utilizando a API
+    loadProducts = async (page = 1) => { //req das noticias utilizando a API
         // console.warn("LoadProcucts")
-        try {
-            const response = await api.get('/news/show');    
-            const { docs } = response.data;
-            this.loadImage(docs)
+		try {
+            const response = await api.get(`/news/show?page=${page}`);    
+            const { docs, ...pageInfo } = response.data;
+			this.setState({pageInfo})
+			const alldocs = [...this.state.docs, ...docs]
+			this.loadImage(alldocs)
         } catch (error) { //se deu erro, pega do async storage e tira o skeleton 
             const otherDocs = await JSON.parse(await AsyncStorage.getItem('docs'))
             if(otherDocs !== null){
@@ -89,10 +93,27 @@ export default class Main extends Component{
             else{
                 ToastAndroid.show("not connected to the internet",ToastAndroid.SHORT)
             }
-        }
+		}
+		
            
-    };
+	};
+	
+	loadMore = () =>{
+		const {page,pageInfo} = this.state
+		this.setState({refreshing:true})
+		if( page === pageInfo.pages){
+			this.setState({refreshing:false})
+			return
+		}
+		else if(page < pageInfo.pages){
+			const pageNumber = page + 1
 
+			this.setState({page:pageNumber})
+			this.loadProducts(pageNumber)
+		}
+
+		setTimeout( ()=> {this.setState({refreshing:false})},3000)
+	}
 
     verifylenght= (frase) => { //corta a frase do resumo a uma quantidade de caracteres definidos
         
@@ -102,6 +123,14 @@ export default class Main extends Component{
         return frase
     }
 
+	verifyListImage = ( lista ) => {
+		if(lista.length === 0){
+			const a = [1]
+			a[0] = {url:require('../image/muhna-ref.jpg')}
+			return a
+		}
+		return lista
+	}
 
     renderItem = ( { item } ) => ( //rendereiza os items baixados da API
         <Animatable.View
@@ -114,8 +143,7 @@ export default class Main extends Component{
                 <Text style = { styles.productTitle }>{ item.title }</Text>
                 <View style = { styles.container2 }>
                     <Slideshow
-                        dataSource = { item.dataSource }
-                        
+                        dataSource = { this.verifyListImage(item.dataSource) }
                     />
                 </View> 
                 <Text style = { styles.productDescription }>{ this.verifylenght( item.resume ) } </Text>
@@ -184,12 +212,14 @@ export default class Main extends Component{
             <View style={styles.container}>
                 {this.fakeLoad(3)}
                 <FlatList
-                    contentContainerStyle={styles.list}
+                    contentContainerStyle = {styles.list}
                     data = {this.state.docs}
                     keyExtractor = {item => item._id}
                     renderItem = {this.renderItem}
-                    refreshing={false}
-                    onRefresh = {this.loadProducts}
+                    refreshing = {this.state.refreshing}
+					onRefresh = {this.loadProducts}
+					onEndReached = {this.loadMore}
+					onEndReachedThreshold = {0.5}
                 />
                
             </View>
