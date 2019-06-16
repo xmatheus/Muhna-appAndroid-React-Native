@@ -1,4 +1,4 @@
-import Slideshow from 'react-native-image-slider-show';
+import Slideshow from 'react-native-image-slider-show-razzium';
 import React, { Component} from 'react';
 
 // slide de varias imagens
@@ -10,17 +10,20 @@ export default class SlideshowTest extends Component {
 			position: 0,
 			interval: null,
 			dataSource: props.dataSource,
+			qtdImage: props.qtdImage,
 		};
 	}
    
-	componentWillMount() {
-		this.setState({
-			interval: setInterval(() => {
-				this.setState({
-					position: this.state.position === this.state.dataSource.length ? 0 : this.state.position + 1
-				});
-			}, 4000)
-		});
+	componentWillMount= () => {
+		if(this.state.qtdImage > 0){
+			this.setState({
+				interval: setInterval(() => {
+					this.setState({
+						position: this.state.position === this.state.dataSource.length ? 0 : this.state.position + 1
+					});
+				}, 4000)
+			});
+		}
 	}
 
 	componentWillUnmount() {

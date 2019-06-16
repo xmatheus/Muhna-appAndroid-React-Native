@@ -144,6 +144,7 @@ export default class Main extends Component{
                 <View style = { styles.container2 }>
                     <Slideshow
                         dataSource = { this.verifyListImage(item.dataSource) }
+                        qtdImage = {item.dataSource.length}
                     />
                 </View> 
                 <Text style = { styles.productDescription }>{ this.verifylenght( item.resume ) } </Text>
@@ -217,7 +218,7 @@ export default class Main extends Component{
                     keyExtractor = {item => item._id}
                     renderItem = {this.renderItem}
                     refreshing = {this.state.refreshing}
-					onRefresh = {this.loadProducts}
+					onRefresh = {()=>{}}
 					onEndReached = {this.loadMore}
 					onEndReachedThreshold = {0.5}
                 />
@@ -237,7 +238,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 20,
     },
     container2Fake: {
         justifyContent: 'center',

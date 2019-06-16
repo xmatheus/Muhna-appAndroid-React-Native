@@ -1,30 +1,65 @@
-import { createStackNavigator} from 'react-navigation';
-import Main from './pages/homePag';
-import pag from './pages/newsPag'
+// stacknavigator changed for createBottomTabNavigator
+import React, { Component} from 'react';
 
-export default createStackNavigator({
-    Home:Main,
-    pag
-}, {
-    navigationOptions: {
-        headerStyle: {
-            backgroundColor: "#fff",
-            elevation:5,
-            shadowColor: "#000000",
-            shadowOpacity: 0.9,
-            shadowRadius: 2,
-            shadowOffset: {
-                height: 5,
-                width: 1
-            }
-        },
-        headerTitleStyle: {
-            textAlign: "left",
-            color: 	'#321a01',//'#4d2800',
-            flex: 1,
-            paddingLeft:40,
-            justifyContent:'flex-end'
-        },
-        headerTintColor: "#000"
+import { createBottomTabNavigator} from 'react-navigation'
+
+import main from './rotas/routeNews'
+
+import visita from './pages/visitaQr'
+
+import games from './pages/games'
+
+import Icon from 'react-native-vector-icons/Entypo'
+
+import IconAnt from 'react-native-vector-icons/AntDesign' 
+
+export default createBottomTabNavigator({
+    News:{
+        screen: main,
+        navigationOptions: () => ({
+            tabBarIcon: ({tintColor}) => (
+                <Icon
+                    name="newsletter"
+                    color={tintColor}
+                    size={24}
+                />
+            )
+        })
     },
-});
+    visita:{
+        screen: visita,
+        navigationOptions: () => ({
+            tabBarIcon: ({tintColor}) => (
+                <IconAnt
+                    name="qrcode"
+                    color={tintColor}
+                    size={24}
+                />
+            )
+        })
+    },
+    jogos:{
+        screen: games,
+        navigationOptions: () => ({
+            tabBarIcon: ({tintColor}) => (
+                <Icon
+                    name="game-controller"
+                    color={tintColor}
+                    size={24}
+                />
+            )
+        })
+    }
+}, navigationOptions={
+        tabBarOptions: {
+            activeTintColor: 'rgb(255,255,255)', 
+            inactiveTintColor: 'rgb(0,0,0)',//'rgb(15, 10, 1)', rgb(25, 13, 1)
+            style: {
+                backgroundColor: 'rgb(50, 25, 1)',
+            },
+            showLabel: false, 
+        },
+    }   
+);
+
+
