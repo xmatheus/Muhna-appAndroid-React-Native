@@ -5,7 +5,7 @@ import { createBottomTabNavigator} from 'react-navigation'
 
 import main from './rotas/routeNews'
 
-import visita from './pages/visitaQr'
+import visita from './rotas/routeVisita'
 
 import games from './pages/games'
 

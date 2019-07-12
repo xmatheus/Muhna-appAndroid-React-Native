@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 
-import { View, StyleSheet, Dimensions, Text, TouchableOpacity, ToastAndroid, Image, TouchableHighlight } from 'react-native';
+import { View, StatusBar, StyleSheet, Dimensions, Text, TouchableOpacity, ToastAndroid, Image, TouchableHighlight } from 'react-native';
 
 import QRCodeScanner from "react-native-qrcode-scanner";
 
@@ -8,47 +8,107 @@ import Dialog, { DialogTitle, DialogContent, SlideAnimation, } from 'react-nativ
 
 import routeNews from '../rotas/routeNews';
 
+import api from '../services/api';
+// import console = require('console');
 
 
 export default class pages extends PureComponent {
 	
+	static navigationOptions = {
+        header: null
+    }
+	
 	constructor(props) {
 		super(props)
 	}
+
 	state = {
-		success:false,
+		sucesso:false,
 		visible:true,
 		onPop:false,
 		data:''
 	}
-	onSuccess = async (e)=>{
-		await this.setState({success:true, data:e.data})
+	onSucesso = async (e)=>{
+		await this.setState({sucesso:true, data:e.data})
 		
 	}
 
-	componentDidMount() {
+	componentDidMount = () => {
 		const { navigation } = this.props;
 		
 		navigation.addListener('willFocus', () =>
-			this.setState({ focusedScreen: true })
+			this.setState({ focusedScreen: true }),
 		);
 		navigation.addListener('willBlur', () =>
 			this.setState({ focusedScreen: false })
+			
 		);
 		setTimeout(()=>{
 			this.setState({onPop:true})
 		},400)
+
+		setTimeout(()=>{
+			this.setState({visible:false})
+		},5000)
 			
 	  }
 	
 	componentWillUnmount() {
 		this.focusListener.remove()
+		
+	}
+
+	proximaPagina = (item) => {
+		this.props.navigation.navigate( 'pag',{item:item} )
+	}
+
+	loadImage = async (docs) =>{
+        // console.error("AQUI", docs)
+
+		let resposta = await api.get('/image/news?newsid='+docs._id+'');
+		let data = resposta.data
+
+		
+		const dataSource = data.map((data) => {
+			return {url:api.defaults.baseURL+'/image/name?filename='+data.filename+''}
+		})
+
+		docs.dataSource = dataSource
+		// console.warn(docs)
+		this.proximaPagina(docs)
+	}
+	
+	buscaDados = async (id) => {
+
+		try {
+            const response = await api.get(`/news/?newsid=${id}`);    
+			
+			const { docs, ...pageInfo } = response.data;
+
+			this.loadImage(docs)
+        } catch (error) { //se deu erro, pega do async storage e tira o skeleton 
+            // const otherDocs = await JSON.parse(await AsyncStorage.getItem('docs'))
+            ToastAndroid.show("not connected to the internet",ToastAndroid.SHORT)
+		}
+	}
+
+	filtraDados = (dados) => {
+		if(dados.startsWith('#id=')){
+			const id = dados.split('#id=')[1]		//quebra a string e pega apenas o ID do item
+			ToastAndroid.show("Sucesso :)",ToastAndroid.SHORT)
+			this.buscaDados(id)
+			
+		}else{
+			ToastAndroid.show("QR CODE invalido. Você está no MuHNA?",ToastAndroid.SHORT)
+		}
 	}
 
 	acessar=()=>{
-		this.setState({success:false})
-		ToastAndroid.show(this.state.data,ToastAndroid.SHORT)
+		this.setState({sucesso:false})
+		// ToastAndroid.show(this.state.data,ToastAndroid.SHORT)
 		this.scanner.reactivate()
+		this.filtraDados(this.state.data)
+		
 	}
 
 	allrender = ()=>{
@@ -61,7 +121,7 @@ export default class pages extends PureComponent {
 				<View style={styles.container}>
 					
 					<QRCodeScanner
-						onRead={ this.onSuccess}
+						onRead={ this.onSucesso}
 						showMarker={false}
 						checkAndroid6Permissions={true}
 						cameraStyle={styles.cameraContainer}
@@ -92,9 +152,7 @@ export default class pages extends PureComponent {
 										</Image>
 										<TouchableHighlight
 											style={styles.popButton}
-											onPress={() => {
-												this.setState({ visible: false })
-											}}
+											onPress={()=>{this.setState({ visible: false })}}
 										>
 											<Text
 												style={styles.text}
@@ -108,11 +166,8 @@ export default class pages extends PureComponent {
 						
 					)}
 
-					{this.state.success && (
+					{this.state.sucesso && (
 						<View style={styles.teste}>
-							<View>
-								<Text style={styles.text}>{this.state.data}</Text>
-							</View>
 							<TouchableOpacity
 								style={styles.productButton}
 								onPress={this.acessar}
@@ -133,7 +188,7 @@ export default class pages extends PureComponent {
 		if (hasCameraPermission === null) {
 			return <View />;
 		} else if (hasCameraPermission === false) {
-			return <Text>No access to camera</Text>;
+			return <Text>Não foi possivel acessar a câmera</Text>;
 		} else if (focusedScreen){
 			return (this.allrender())
 		} else {
@@ -144,6 +199,7 @@ export default class pages extends PureComponent {
 	render() {
 		return(
 			<View style={styles.containerGeral}>
+				<StatusBar backgroundColor="white" barStyle="dark-content" />
 				{this.renderCamera()}	
 			</View>
 		)

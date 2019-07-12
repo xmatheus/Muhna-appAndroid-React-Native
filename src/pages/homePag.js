@@ -1,11 +1,9 @@
 import React, { Component} from 'react';
 import api from '../services/api';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image, AsyncStorage , ToastAndroid, Dimensions,PixelRatio, ScrollView } from 'react-native';
+import { View, Text, StatusBar, FlatList, TouchableOpacity, StyleSheet, Image, AsyncStorage , ToastAndroid, Dimensions,PixelRatio, ScrollView } from 'react-native';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';  
 import Slideshow from './components/Slideshow'
 import * as Animatable from 'react-native-animatable';
-
-
 
 const widthPercentageToDP = widthPercent => {
   const screenWidth = Dimensions.get('window').width;
@@ -49,16 +47,18 @@ export default class Main extends Component{
 
     };
 
+
     loadImage = async (docs) =>{
         // console.error("AQUI", docs)
         const doc = await Promise.all(docs.map(async (file) => {
             
-            let resposta = await api.get('/image/news?newsid='+file._id+'');
+            let resposta = await api.get('/file/news?newsid='+file._id+'');
             let data = resposta.data
 
-            
-            const dataSource = data.map((data) => {
-                return {url:api.defaults.baseURL+'/image/name?filename='+data.filename+''}
+            const { image } = data
+
+            const dataSource = image.map((data) => {
+                return {url:api.defaults.baseURL+'/file/image?filename='+data.filename+''}
             })
             
             file.dataSource= dataSource
@@ -211,6 +211,8 @@ export default class Main extends Component{
         return(
             
             <View style={styles.container}>
+                <StatusBar backgroundColor="white" barStyle="dark-content" />
+                
                 {this.fakeLoad(3)}
                 <FlatList
                     contentContainerStyle = {styles.list}
@@ -218,12 +220,13 @@ export default class Main extends Component{
                     keyExtractor = {item => item._id}
                     renderItem = {this.renderItem}
                     refreshing = {this.state.refreshing}
-					onRefresh = {()=>{}}
-					onEndReached = {this.loadMore}
-					onEndReachedThreshold = {0.5}
+                    onRefresh = {()=>{}}
+                    onEndReached = {this.loadMore}
+                    onEndReachedThreshold = {0.5}
                 />
-               
+            
             </View>
+            
         );
     }
 }
