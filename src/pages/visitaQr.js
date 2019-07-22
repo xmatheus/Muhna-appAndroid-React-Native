@@ -59,22 +59,24 @@ export default class pages extends PureComponent {
 	}
 
 	proximaPagina = (item) => {
+		// console.warn("chegou aqui")
 		this.props.navigation.navigate( 'pag',{item:item} )
 	}
 
 	loadImage = async (docs) =>{
         // console.error("AQUI", docs)
-
-		let resposta = await api.get('/image/news?newsid='+docs._id+'');
-		let data = resposta.data
-
 		
-		const dataSource = data.map((data) => {
-			return {url:api.defaults.baseURL+'/image/name?filename='+data.filename+''}
-		})
+		let resposta = await api.get('/file/news?newsid='+docs._id+'');
+        let data = resposta.data
 
-		docs.dataSource = dataSource
-		// console.warn(docs)
+        const { image } = data
+
+		const dataSource = image.map((data) => {
+			return {url:api.defaults.baseURL+'/file/image?filename='+data.filename+''}
+		})
+            
+        docs.dataSource= dataSource
+		
 		this.proximaPagina(docs)
 	}
 	
@@ -84,7 +86,8 @@ export default class pages extends PureComponent {
             const response = await api.get(`/news/?newsid=${id}`);    
 			
 			const { docs, ...pageInfo } = response.data;
-
+			// ToastAndroid.show(docs,ToastAndroid.SHORT)
+			// console.warn(docs)
 			this.loadImage(docs)
         } catch (error) { //se deu erro, pega do async storage e tira o skeleton 
             // const otherDocs = await JSON.parse(await AsyncStorage.getItem('docs'))
