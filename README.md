@@ -1,19 +1,10 @@
-# Muhna-news
-FRONTEND do aplicativo do Museu de História Natural do Araguaia
 
-guia para clonar o repositório e execu
 
->git clone https://github.com/Matheusftc01/Muhna-news.
+## Aplicativo do Museu de História Natural do Araguaia
 
->cd Muhna-news.
 
->npm install.
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/34286800/62339602-8fb5b100-b4aa-11e9-98e0-1564526219a7.png" width="400" alt="accessibility text">
+  <img src="https://user-images.githubusercontent.com/34286800/62339601-8f1d1a80-b4aa-11e9-8c26-1de9c8956eaa.png" width="400" title="hover text">
+</p>
 
->react-native upgrade
-
->react-native link.
-
->react-native start.
-
->react-native run-(Android ou IOS).
-  
