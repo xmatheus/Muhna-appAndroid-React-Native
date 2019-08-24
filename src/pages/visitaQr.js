@@ -57,24 +57,32 @@ export default class pages extends PureComponent {
 		this.focusListener.remove();
 	}
 
-	//   loadImage = async docs => {
-	//     // console.error("AQUI", docs)
+	loadFile = async (docs) => {
+		// console.error("AQUI", docs)
 
-	//     let resposta = await api.get("/file/news?newsid=" + docs._id + "");
-	//     let data = resposta.data;
+		let resposta = await api.get('/filePost/post?postid=' + docs._id + '');
+		let data = resposta.data;
 
-	//     const { image } = data;
+		const { image, video } = data;
 
-	//     const dataSource = image.map(data => {
-	//       return {
-	//         url: api.defaults.baseURL + "/file/image?filename=" + data.filename + ""
-	//       };
-	//     });
+		const imageSource = image.map((data) => {
+			return {
+				url: api.defaults.baseURL + '/filePost/image?filename=' + data.filename + ''
+			};
+		});
 
-	//     docs.imageSource = dataSource;
+		const videoSource = video.map((data) => {
+			return {
+				url: api.defaults.baseURL + '/filePost/video?filename=' + data.filename + ''
+			};
+		});
 
-	//     this.proximaPagina(docs);
-	//   };
+		docs.imageSource = imageSource;
+		docs.videoSource = videoSource;
+
+		this.props.navigation.navigate('visitaGuiada', { item: docs });
+		// this.proximaPagina(docs);
+	};
 
 	buscaDados = async (id) => {
 		try {
@@ -82,7 +90,7 @@ export default class pages extends PureComponent {
 
 			const { docs, ...pageInfo } = response.data;
 			// ToastAndroid.show(docs,ToastAndroid.SHORT)
-			this.props.navigation.navigate('visitaGuiada', { item: docs });
+			this.loadFile(docs);
 		} catch (error) {
 			//se deu erro, pega do async storage e tira o skeleton
 			// const otherDocs = await JSON.parse(await AsyncStorage.getItem('docs'))

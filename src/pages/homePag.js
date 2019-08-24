@@ -55,20 +55,21 @@ export default class Main extends Component {
 		// console.error("AQUI", docs)
 		const doc = await Promise.all(
 			docs.map(async (file) => {
-				let resposta = await api.get('/file/news?newsid=' + file._id + '');
+				let resposta = await api.get('/fileNews/news?newsid=' + file._id + '');
 				let data = resposta.data;
 
 				const { image, video } = data;
 
 				const imageSource = image.map((data) => {
 					return {
-						url: api.defaults.baseURL + '/file/image?filename=' + data.filename + ''
+						url: api.defaults.baseURL + '/fileNews/image?filename=' + data.filename + ''
 					};
 				});
 
 				const videoSource = video.map((data) => {
 					return {
-						url: api.defaults.baseURL + '/file/video?filename=' + data.filename + ''
+						url: api.defaults.baseURL + '/fileNews/video?filename=' + data.filename + '',
+						_id: data._id
 					};
 				});
 
@@ -222,6 +223,7 @@ export default class Main extends Component {
 				<StatusBar backgroundColor="white" barStyle="dark-content" />
 
 				{this.fakeLoad(3)}
+
 				<FlatList
 					contentContainerStyle={styles.list}
 					data={this.state.docs}

@@ -1,29 +1,21 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
-import {
-	StyleSheet,
-	View,
-	Text,
-	Dimensions,
-	ScrollView,
-	Linking,
-	PixelRatio
-} from "react-native";
+import { StyleSheet, View, Text, Dimensions, ScrollView, Linking, PixelRatio } from 'react-native';
 
-import HTML from "react-native-render-html";
+import HTML from 'react-native-render-html';
 
-import IconAnt from "react-native-vector-icons/AntDesign";
+import IconAnt from 'react-native-vector-icons/AntDesign';
 
-import IconMat from "react-native-vector-icons/MaterialIcons";
+import IconMat from 'react-native-vector-icons/MaterialIcons';
 
-import * as Animatable from "react-native-animatable";
+import * as Animatable from 'react-native-animatable';
 
 const dm = {
-	height: Dimensions.get("window").height * 0.4,
-	width: Dimensions.get("window").width
+	height: Dimensions.get('window').height * 0.4,
+	width: Dimensions.get('window').width
 };
 
-Dimensions.addEventListener("change", dimensions => {
+Dimensions.addEventListener('change', (dimensions) => {
 	dm.width = dimensions.window.width;
 	dm.height = dimensions.window.height * 0.4;
 });
@@ -32,15 +24,15 @@ export default class pagina extends Component {
 	constructor(props) {
 		super(props);
 		const { navigation } = this.props;
-		const item = navigation.getParam("item", "no-name");
+		const item = navigation.getParam('item', 'no-name');
 
 		setTimeout(() => {
 			this.setState({
 				view: (
 					<View style={styles.container}>
 						<Animatable.View
-							animation="fadeIn"
-							duration={2500}
+							animation="fadeInUp"
+							duration={1000}
 							useNativeDriver={true}
 							// onAnimationEnd={() => {this.setState({visible:true})}}
 						>
@@ -53,16 +45,14 @@ export default class pagina extends Component {
 									</View>
 									<View style={styles.iconTitle}>
 										<IconMat name="date-range" size={20} color="#000" />
-										<Text style={styles.iconText}>
-											{this.formatDate(item.createAt)}
-										</Text>
+										<Text style={styles.iconText}>{this.formatDate(item.createAt)}</Text>
 									</View>
 								</View>
 							</View>
 
 							<ScrollView style={styles.scroll}>
 								<HTML
-									html={"<div>" + item.post + "</div>"}
+									html={'<div>' + item.post + '</div>'}
 									tagsStyles={tagsStyles}
 									onLinkPress={(evt, href) => {
 										Linking.openURL(href);
@@ -79,8 +69,8 @@ export default class pagina extends Component {
 	}
 	static navigationOptions = ({ navigation }) => {
 		return {
-			title: navigation.getParam("name", ""),
-			textAlign: "center"
+			title: navigation.getParam('name', ''),
+			textAlign: 'center'
 		};
 	};
 	state = {
@@ -102,60 +92,60 @@ export default class pagina extends Component {
 
 const tagsStyles = {
 	p: {
-		textAlign: "justify",
-		color: "#000"
+		textAlign: 'justify',
+		color: '#000'
 	},
 	strong: {
-		textAlign: "justify",
-		color: "#000"
+		textAlign: 'justify',
+		color: '#000'
 	},
 	l1: {
-		textAlign: "justify",
-		color: "#000"
+		textAlign: 'justify',
+		color: '#000'
 	},
 	h1: {
-		textAlign: "center",
-		color: "#000"
+		textAlign: 'center',
+		color: '#000'
 	},
 	h2: {
-		textAlign: "center",
-		color: "#000"
+		textAlign: 'center',
+		color: '#000'
 	},
 	h3: {
-		textAlign: "center",
-		color: "#000"
+		textAlign: 'center',
+		color: '#000'
 	}
 };
 
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#fff"
+		backgroundColor: '#fff'
 		// alignItems: 'center',
 		// justifyContent: 'flex-start',
 	},
 
 	activityIndicator: {
 		flex: 1,
-		justifyContent: "center",
-		alignItems: "center"
+		justifyContent: 'center',
+		alignItems: 'center'
 	},
 
 	scroll: {
 		flexGrow: 10,
-		flexDirection: "column",
+		flexDirection: 'column',
 		paddingLeft: 5,
 		paddingRight: 5
 	},
 
 	BarraTitulo: {
 		flexGrow: 1,
-		width: "100%",
-		justifyContent: "flex-end",
+		width: '100%',
+		justifyContent: 'flex-end',
 
 		borderRadius: 4,
 		marginBottom: 1,
-		shadowColor: "#000000",
+		shadowColor: '#000000',
 		shadowOffset: {
 			height: 3,
 			width: 5
@@ -167,16 +157,16 @@ const styles = StyleSheet.create({
 
 	tituloText: {
 		fontSize: 25 / PixelRatio.getFontScale(),
-		textAlign: "center",
-		color: "#000",
+		textAlign: 'center',
+		color: '#000',
 		paddingBottom: 25
 		// paddingBottom:10,
 	},
 
 	containerIcon: {
-		flexDirection: "column",
-		justifyContent: "flex-end",
-		alignItems: "flex-start",
+		flexDirection: 'column',
+		justifyContent: 'flex-end',
+		alignItems: 'flex-start',
 		paddingBottom: 20,
 		paddingLeft: 2
 		// borderBottomColor:'#000',
@@ -185,15 +175,15 @@ const styles = StyleSheet.create({
 	},
 
 	iconTitle: {
-		flexDirection: "row",
+		flexDirection: 'row',
 		// alignItems: 'flex-end',
-		justifyContent: "flex-start",
+		justifyContent: 'flex-start',
 		borderRadius: 5
 	},
 
 	iconText: {
-		color: "#000",
-		textAlignVertical: "bottom"
+		color: '#000',
+		textAlignVertical: 'bottom'
 	},
 
 	slideImageOne: {
@@ -201,19 +191,19 @@ const styles = StyleSheet.create({
 		// alignItems:'center',
 		// justifyContent:'center',
 		height: dm.height, //Dimensions.get('window').height * 0.4,
-		width: "100%", //Dimensions.get('window').width,
-		backgroundColor: "#ffff"
+		width: '100%', //Dimensions.get('window').width,
+		backgroundColor: '#ffff'
 	},
 	slideImageTwo: {
-		flexDirection: "column",
-		alignItems: "center",
-		justifyContent: "center",
-		backgroundColor: "#ffff"
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: '#ffff'
 	},
 
 	slideTitle: {
 		fontSize: 25,
 		paddingBottom: 10,
-		color: "#000"
+		color: '#000'
 	}
 });
