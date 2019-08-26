@@ -42,7 +42,12 @@ export default class pages extends PureComponent {
 	componentDidMount = () => {
 		const { navigation } = this.props;
 
-		navigation.addListener('willFocus', () => this.setState({ focusedScreen: true }));
+		navigation.addListener('willFocus', () => {
+			this.setState({ focusedScreen: true });
+			{
+				this.props.navigation.tabBarVisible = false;
+			}
+		});
 		navigation.addListener('willBlur', () => this.setState({ focusedScreen: false }));
 		setTimeout(() => {
 			this.setState({ onPop: true });
@@ -50,6 +55,9 @@ export default class pages extends PureComponent {
 
 		setTimeout(() => {
 			this.setState({ visible: false });
+			{
+				this.props.navigation.tabBarVisible = true;
+			}
 		}, 5000);
 	};
 
@@ -73,7 +81,8 @@ export default class pages extends PureComponent {
 
 		const videoSource = video.map((data) => {
 			return {
-				url: api.defaults.baseURL + '/filePost/video?filename=' + data.filename + ''
+				url: api.defaults.baseURL + '/filePost/video?filename=' + data.filename + '',
+				_id: data._id
 			};
 		});
 
@@ -132,7 +141,6 @@ export default class pages extends PureComponent {
 							this.scanner = elem;
 						}}
 					/>
-
 					{this.state.onPop && (
 						<View style={styles.PopContainer}>
 							<Dialog
@@ -171,14 +179,6 @@ export default class pages extends PureComponent {
 									</View>
 								</DialogContent>
 							</Dialog>
-						</View>
-					)}
-
-					{this.state.sucesso && (
-						<View style={styles.teste}>
-							<TouchableOpacity style={styles.productButton} onPress={this.acessar}>
-								<Text style={styles.text}>Acessar</Text>
-							</TouchableOpacity>
 						</View>
 					)}
 				</View>

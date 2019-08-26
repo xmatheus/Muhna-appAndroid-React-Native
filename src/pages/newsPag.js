@@ -96,15 +96,8 @@ export default class extends React.Component {
 							) : null}
 							{item.videoSource.length > 0 ? (
 								<View style={{ paddingTop: 50, alignItems: 'center' }}>
-									<Text style={styles.slideTitle}>Clique no botão abaixo para ver os vídeos</Text>
-									<TouchableOpacity
-										style={styles.botaoVideo}
-										onPress={() => {
-											this.props.navigation.navigate('videos', { videoSource: item.videoSource });
-										}}
-									>
-										<Text style={styles.abrirVideos}>Abrir</Text>
-									</TouchableOpacity>
+									<Text style={styles.slideTitle}>Vídeos</Text>
+									<MeuVideo videoSource={item.videoSource} />
 								</View>
 							) : null}
 						</ScrollView>
@@ -272,7 +265,7 @@ const styles = StyleSheet.create({
 	},
 
 	abrirVideos: {
-		fontSize: 10 / PixelRatio.getFontScale(),
+		fontSize: 9 / PixelRatio.getFontScale(),
 		textAlign: 'center',
 		color: '#fff'
 	}

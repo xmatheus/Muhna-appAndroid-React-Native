@@ -10,6 +10,10 @@ import IconMat from 'react-native-vector-icons/MaterialIcons';
 
 import * as Animatable from 'react-native-animatable';
 
+import ImageViewer from 'react-native-image-zoom-viewer';
+
+import MeuVideo from './vide';
+
 const dm = {
 	height: Dimensions.get('window').height * 0.4,
 	width: Dimensions.get('window').width
@@ -25,6 +29,14 @@ export default class pagina extends Component {
 		super(props);
 		const { navigation } = this.props;
 		const item = navigation.getParam('item', 'no-name');
+
+		item.imageSource = item.imageSource.map((img) => {
+			img.props = {
+				borderRadius: 10
+			};
+			// img.width = dm.width
+			return img;
+		});
 
 		setTimeout(() => {
 			this.setState({
@@ -49,7 +61,6 @@ export default class pagina extends Component {
 									</View>
 								</View>
 							</View>
-
 							<ScrollView style={styles.scroll}>
 								<HTML
 									html={'<div>' + item.post + '</div>'}
@@ -59,6 +70,35 @@ export default class pagina extends Component {
 									}}
 									textSelectable={true}
 								/>
+
+								{item.imageSource.length > 0 ? (
+									<View>
+										<View style={styles.slideImageTwo}>
+											<Text style={styles.slideTitle}>Imagens</Text>
+										</View>
+										<View style={styles.slideImageOne}>
+											<ImageViewer
+												imageUrls={item.imageSource}
+												backgroundColor={'#ffff'}
+												pageAnimateTime={300}
+												menus={({ cancel, saveToLocal }) => {
+													cancel();
+												}}
+												enablePreload={true}
+												renderArrowLeft={() => {
+													<IconMat name="date-range" size={20} color="#000" />;
+												}}
+											/>
+										</View>
+									</View>
+								) : null}
+								{item.videoSource.length > 0 ? (
+									<View style={{ paddingTop: 30, alignItems: 'center' }}>
+										<Text style={styles.slideTitle}>Vídeos</Text>
+										<MeuVideo videoSource={item.videoSource} />
+									</View>
+								) : null}
+								<View style={{ height: 100 }} />
 							</ScrollView>
 						</Animatable.View>
 					</View>
@@ -121,6 +161,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: '#fff'
+
 		// alignItems: 'center',
 		// justifyContent: 'flex-start',
 	},
@@ -185,11 +226,7 @@ const styles = StyleSheet.create({
 		color: '#000',
 		textAlignVertical: 'bottom'
 	},
-
 	slideImageOne: {
-		// flexDirection:'column',
-		// alignItems:'center',
-		// justifyContent:'center',
 		height: dm.height, //Dimensions.get('window').height * 0.4,
 		width: '100%', //Dimensions.get('window').width,
 		backgroundColor: '#ffff'

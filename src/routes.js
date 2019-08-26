@@ -9,9 +9,7 @@ import main from './rotas/routeNews';
 
 import visita from './rotas/routeVisita';
 
-// import games from './pages/games'
-
-import MeuVideo from './pages/vide';
+import games from './pages/games';
 
 export default createBottomTabNavigator(
   {
@@ -28,7 +26,7 @@ export default createBottomTabNavigator(
       })
     },
     jogos: {
-      screen: MeuVideo,
+      screen: games,
       navigationOptions: () => ({
         tabBarIcon: ({ tintColor }) => <Icon name="game-controller" color={tintColor} size={24} />
       })

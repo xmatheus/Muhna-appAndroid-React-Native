@@ -20,7 +20,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 // import { Container } from './styles';
 
 const dm = {
-	height: Dimensions.get('window').height * 0.6,
+	height: Dimensions.get('window').height * 0.4,
 	width: Dimensions.get('window').width
 };
 
@@ -47,65 +47,31 @@ export default class MeuVideo extends Component {
 		max: 0,
 		pos: 0
 	};
-	multipleVideo = (item) => {
-		const videos = [];
-		if (item != (undefined || null) && item.length > 0) {
-			let contador = 1;
-			item.forEach((element) => {
-				videos.push(
-					<View
-						style={{
-							height: dm.height,
-							width: dm.width,
-							alignItems: 'center',
-							alignContent: 'center'
-						}}
-					>
-						<VideoPlayer
-							source={{
-								uri: element.uri
-							}}
-							navigator={() => {}}
-							disableVolume={true}
-							disableBack={true}
-						/>
-					</View>
-				);
-			});
-			return videos;
-		}
-		return null;
-	};
 
 	renderItem = ({ item }) => (
 		<VideoPlayer
-			style={{ height: dm.height * 0.99, width: dm.width }}
+			style={{
+				width: dm.width,
+				backgroundColor: '#000'
+			}}
 			source={{
 				uri: item.url
 			}}
-			navigator={() => {}}
 			disableVolume={true}
 			disableBack={true}
 			paused={true}
-			// onPlay={() => console.warn('pla')}
-			// onPause={() => console.warn('pause')}
-			// onPress={() => console.warn('Aeo')}
+			videoStyle={{ backgroundColor: '#000' }}
 		/>
 	);
 	// _flatList = () => {};
 	componentDidMount = () => {
 		const { navigation } = this.props;
-		const item = navigation.getParam('videoSource', 'no-name');
+		const item = this.props.videoSource || navigation.getParam('videoSource', 'no-name');
 
 		if (item != (undefined || null)) {
 			this.setState({ url: item });
 			this.setState({ pos: 0, max: item.length - 1 });
 		}
-		// if (this.props.urlVideos != (undefined || null)) {
-		// 	const item = this.props.urlVideos;
-		// 	this.setState({ pos: 0, max: this.props.urlVideos.length - 1 });
-		// 	this.setState({ url: item });
-		// }
 	};
 
 	proximo = () => {
@@ -150,9 +116,15 @@ export default class MeuVideo extends Component {
 	render = () => {
 		return (
 			<View
-				style={{ flex: 1, paddingVertical: 50, justifyContent: 'center', alignItems: 'center' }}
+				style={{
+					flex: 1,
+					paddingVertical: 50,
+					justifyContent: 'center',
+					alignItems: 'center',
+					borderRadius: 20
+				}}
 			>
-				<View style={{ height: dm.height }}>
+				<View style={{ height: dm.height, borderRadius: 20 }}>
 					<FlatList
 						horizontal={true}
 						ref={(ref) => {
