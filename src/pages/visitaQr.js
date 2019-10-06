@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, {PureComponent} from 'react';
 
 import {
 	View,
@@ -6,22 +6,26 @@ import {
 	StyleSheet,
 	Dimensions,
 	Text,
-	TouchableOpacity,
+	ProgressBarAndroid,
 	ToastAndroid,
 	Image,
-	TouchableHighlight
+	TouchableHighlight,
 } from 'react-native';
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
 
-import Dialog, { DialogTitle, DialogContent, SlideAnimation } from 'react-native-popup-dialog';
+import Dialog, {
+	DialogTitle,
+	DialogContent,
+	SlideAnimation,
+} from 'react-native-popup-dialog';
 
 import api from '../services/api';
 // import console = require('console');
 
 export default class pages extends PureComponent {
 	static navigationOptions = {
-		header: null
+		header: null,
 	};
 
 	constructor(props) {
@@ -30,34 +34,36 @@ export default class pages extends PureComponent {
 
 	state = {
 		sucesso: false,
+		onScreen: false,
 		visible: true,
 		onPop: false,
-		data: ''
+		data: '',
 	};
-	onSucesso = async (e) => {
-		await this.setState({ data: e.data });
+	onSucesso = async e => {
+		await this.setState({data: e.data});
 		this.acessar();
 	};
 
 	componentDidMount = () => {
-		const { navigation } = this.props;
+		const {navigation} = this.props;
 
 		navigation.addListener('willFocus', () => {
-			this.setState({ focusedScreen: true });
-			{
-				this.props.navigation.tabBarVisible = false;
-			}
+			this.setState({focusedScreen: true});
+			setTimeout(() => {
+				this.setState({onScreen: true});
+			}, 600);
 		});
-		navigation.addListener('willBlur', () => this.setState({ focusedScreen: false }));
-		setTimeout(() => {
-			this.setState({ onPop: true });
-		}, 400);
+		navigation.addListener('willBlur', () => {
+			this.setState({focusedScreen: false}),
+				this.setState({onScreen: false});
+		});
 
 		setTimeout(() => {
-			this.setState({ visible: false });
-			{
-				this.props.navigation.tabBarVisible = true;
-			}
+			this.setState({onPop: true});
+		}, 700);
+
+		setTimeout(() => {
+			this.setState({visible: false});
 		}, 5000);
 	};
 
@@ -65,56 +71,70 @@ export default class pages extends PureComponent {
 		this.focusListener.remove();
 	}
 
-	loadFile = async (docs) => {
+	loadFile = async docs => {
 		// console.error("AQUI", docs)
 
 		let resposta = await api.get('/filePost/post?postid=' + docs._id + '');
 		let data = resposta.data;
 
-		const { image, video } = data;
+		const {image, video} = data;
 
-		const imageSource = image.map((data) => {
+		const imageSource = image.map(data => {
 			return {
-				url: api.defaults.baseURL + '/filePost/image?filename=' + data.filename + ''
+				url:
+					api.defaults.baseURL +
+					'/filePost/image?filename=' +
+					data.filename +
+					'',
 			};
 		});
 
-		const videoSource = video.map((data) => {
+		const videoSource = video.map(data => {
 			return {
-				url: api.defaults.baseURL + '/filePost/video?filename=' + data.filename + '',
-				_id: data._id
+				url:
+					api.defaults.baseURL +
+					'/filePost/video?filename=' +
+					data.filename +
+					'',
+				_id: data._id,
 			};
 		});
 
 		docs.imageSource = imageSource;
 		docs.videoSource = videoSource;
 
-		this.props.navigation.navigate('visitaGuiada', { item: docs });
+		this.props.navigation.navigate('visitaGuiada', {item: docs});
 		// this.proximaPagina(docs);
 	};
 
-	buscaDados = async (id) => {
+	buscaDados = async id => {
 		try {
 			const response = await api.get(`post?postid=${id}`);
 
-			const { docs, ...pageInfo } = response.data;
+			const {docs, ...pageInfo} = response.data;
 			// ToastAndroid.show(docs,ToastAndroid.SHORT)
 			this.loadFile(docs);
 		} catch (error) {
 			//se deu erro, pega do async storage e tira o skeleton
 			// const otherDocs = await JSON.parse(await AsyncStorage.getItem('docs'))
-			ToastAndroid.show('not connected to the internet', ToastAndroid.SHORT);
+			ToastAndroid.show(
+				'not connected to the internet',
+				ToastAndroid.SHORT,
+			);
 		}
 		// this.scanner.reactivate();
 	};
 
-	filtraDados = (dados) => {
+	filtraDados = dados => {
 		if (dados.startsWith('#id=')) {
 			const id = dados.split('#id=')[1]; //quebra a string e pega apenas o ID do item
 			ToastAndroid.show('Sucesso :)', ToastAndroid.SHORT);
 			this.buscaDados(id);
 		} else {
-			ToastAndroid.show('QR CODE invalido. Você está no MuHNA?', ToastAndroid.SHORT);
+			ToastAndroid.show(
+				'QR CODE invalido. Você está no MuHNA?',
+				ToastAndroid.SHORT,
+			);
 		}
 	};
 
@@ -137,7 +157,7 @@ export default class pages extends PureComponent {
 						showMarker={false}
 						checkAndroid6Permissions={true}
 						cameraStyle={styles.cameraContainer}
-						ref={(elem) => {
+						ref={elem => {
 							this.scanner = elem;
 						}}
 					/>
@@ -146,35 +166,41 @@ export default class pages extends PureComponent {
 							<Dialog
 								visible={this.state.visible}
 								onTouchOutside={() => {
-									this.setState({ visible: false });
+									this.setState({visible: false});
 								}}
 								dialogAnimation={
 									new SlideAnimation({
-										slideFrom: 'bottom'
+										slideFrom: 'bottom',
 									})
 								}
-								dialogTitle={<DialogTitle title="Como usar?" />}
-							>
+								dialogTitle={
+									<DialogTitle title="Como usar?" />
+								}>
 								<DialogContent>
 									<View
 										style={{
 											flexDirection: 'column',
 											alignItems: 'center',
-											justifyContent: 'center'
-										}}
-									>
-										<Text>Aponte a câmera para o QR code de algum item do acervo</Text>
+											justifyContent: 'center',
+										}}>
+										<Text>
+											Aponte a câmera para o QR code de
+											algum item do acervo
+										</Text>
 										<Image
-											style={{ height: 400, width: 200 }}
-											source={(uri = require('../image/exemplo.png'))}
+											style={{height: 400, width: 200}}
+											source={
+												(uri = require('../image/exemplo.png'))
+											}
 										/>
 										<TouchableHighlight
 											style={styles.popButton}
 											onPress={() => {
-												this.setState({ visible: false });
-											}}
-										>
-											<Text style={styles.text}>Fechar</Text>
+												this.setState({visible: false});
+											}}>
+											<Text style={styles.text}>
+												Fechar
+											</Text>
 										</TouchableHighlight>
 									</View>
 								</DialogContent>
@@ -187,7 +213,7 @@ export default class pages extends PureComponent {
 	};
 
 	renderCamera = () => {
-		const { hasCameraPermission, focusedScreen } = this.state;
+		const {hasCameraPermission, focusedScreen} = this.state;
 		if (hasCameraPermission === null) {
 			return <View />;
 		} else if (hasCameraPermission === false) {
@@ -203,7 +229,14 @@ export default class pages extends PureComponent {
 		return (
 			<View style={styles.containerGeral}>
 				<StatusBar backgroundColor="white" barStyle="dark-content" />
-				{this.renderCamera()}
+				{!this.state.onScreen ? (
+					<ProgressBarAndroid
+						styleAttr="Horizontal"
+						color="#2196F3"
+					/>
+				) : (
+					<>{this.renderCamera()}</>
+				)}
 			</View>
 		);
 	}
@@ -211,12 +244,12 @@ export default class pages extends PureComponent {
 
 const styles = StyleSheet.create({
 	containerGeral: {
-		flex: 1
+		flex: 1,
 	},
 
 	PopContainer: {
 		height: Dimensions.get('window').height * 0.8,
-		width: Dimensions.get('window').width * 0.9
+		width: Dimensions.get('window').width * 0.9,
 	},
 
 	teste: {
@@ -224,12 +257,12 @@ const styles = StyleSheet.create({
 		height: Dimensions.get('window').height * 0.1,
 		width: Dimensions.get('window').width * 0.3,
 		justifyContent: 'center',
-		alignItems: 'center'
+		alignItems: 'center',
 	},
 
 	modal: {
 		height: Dimensions.get('window').height * 0.4,
-		width: Dimensions.get('window').width * 0.7
+		width: Dimensions.get('window').width * 0.7,
 	},
 
 	container: {
@@ -237,20 +270,20 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		backgroundColor: 'white',
 		justifyContent: 'center',
-		alignItems: 'center'
+		alignItems: 'center',
 	},
 
 	touchable: {
-		padding: 16
+		padding: 16,
 	},
 
 	text: {
 		fontSize: 21,
-		color: 'rgb(255,255,255)'
+		color: 'rgb(255,255,255)',
 	},
 
 	cameraContainer: {
-		flex: 1
+		flex: 1,
 	},
 
 	productButton: {
@@ -260,11 +293,11 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgb(45, 20, 7)',
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginTop: 5
+		marginTop: 5,
 	},
 
 	cameraContainer: {
-		height: Dimensions.get('window').height
+		height: Dimensions.get('window').height,
 	},
 
 	popButton: {
@@ -277,6 +310,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		padding: 3,
-		marginTop: 20
-	}
+		marginTop: 20,
+	},
 });

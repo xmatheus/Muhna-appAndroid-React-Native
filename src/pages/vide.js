@@ -1,17 +1,9 @@
 /* eslint-disable react/prefer-stateless-function */
 // "https://muhna-api.herokuapp.com/file/video?filename=42b787cd912302a5b2997e5d7262927f.mp4"
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
-import {
-	View,
-	Text,
-	Dimensions,
-	ScrollView,
-	FlatList,
-	RefreshControl,
-	TouchableOpacity
-} from 'react-native';
+import {View, Dimensions, FlatList, TouchableOpacity} from 'react-native';
 
 import VideoPlayer from 'react-native-video-controls';
 
@@ -21,7 +13,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 
 const dm = {
 	height: Dimensions.get('window').height * 0.4,
-	width: Dimensions.get('window').width
+	width: Dimensions.get('window').width,
 };
 
 // {
@@ -45,62 +37,75 @@ export default class MeuVideo extends Component {
 	state = {
 		url: [],
 		max: 0,
-		pos: 0
+		pos: 0,
 	};
 
-	renderItem = ({ item }) => (
+	renderItem = ({item}) => (
 		<VideoPlayer
 			style={{
 				width: dm.width,
-				backgroundColor: '#000'
+				backgroundColor: '#000',
 			}}
 			source={{
-				uri: item.url
+				uri: item.url,
 			}}
 			disableVolume={true}
 			disableBack={true}
 			paused={true}
-			videoStyle={{ backgroundColor: '#000' }}
+			videoStyle={{backgroundColor: '#000'}}
 		/>
 	);
 	// _flatList = () => {};
 	componentDidMount = () => {
-		const { navigation } = this.props;
-		const item = this.props.videoSource || navigation.getParam('videoSource', 'no-name');
+		const {navigation} = this.props;
+		const item =
+			this.props.videoSource ||
+			navigation.getParam('videoSource', 'no-name');
 
 		if (item != (undefined || null)) {
-			this.setState({ url: item });
-			this.setState({ pos: 0, max: item.length - 1 });
+			this.setState({url: item});
+			this.setState({pos: 0, max: item.length - 1});
 		}
 	};
 
 	proximo = () => {
 		if (this.flatList != (undefined || null)) {
 			if (this.state.pos === this.state.max) {
-				this.setState({ pos: 0 });
+				this.setState({pos: 0});
 			} else {
-				this.setState({ pos: this.state.pos + 1 });
+				this.setState({pos: this.state.pos + 1});
 			}
-			this.flatList.scrollToIndex({ animated: true, index: this.state.pos });
+			this.flatList.scrollToIndex({
+				animated: true,
+				index: this.state.pos,
+			});
 		}
 	};
 
 	anterior() {
 		if (this.flatList != (undefined || null)) {
 			if (this.state.pos === 0) {
-				this.setState({ pos: this.state.max });
+				this.setState({pos: this.state.max});
 			} else {
-				this.setState({ pos: this.state.pos - 1 });
+				this.setState({pos: this.state.pos - 1});
 			}
-			this.flatList.scrollToIndex({ animated: true, index: this.state.pos });
+			this.flatList.scrollToIndex({
+				animated: true,
+				index: this.state.pos,
+			});
 		}
 	}
 
 	verifica = () => {
-		if (this.state.url != (undefined || null) && this.state.url.length > 1) {
+		if (
+			this.state.url != (undefined || null) &&
+			this.state.url.length > 1
+		) {
 			return (
-				<View style={{ flex: 1, flexDirection: 'row' }}>
-					<TouchableOpacity onPress={() => this.anterior()} style={{ width: 50 }}>
+				<View style={{flex: 1, flexDirection: 'row'}}>
+					<TouchableOpacity
+						onPress={() => this.anterior()}
+						style={{width: 50}}>
 						<Icon name="left" color={'#000'} size={40} />
 					</TouchableOpacity>
 					<TouchableOpacity onPress={() => this.proximo()}>
@@ -121,18 +126,17 @@ export default class MeuVideo extends Component {
 					paddingVertical: 50,
 					justifyContent: 'center',
 					alignItems: 'center',
-					borderRadius: 20
-				}}
-			>
-				<View style={{ height: dm.height, borderRadius: 20 }}>
+					borderRadius: 20,
+				}}>
+				<View style={{height: dm.height, borderRadius: 20}}>
 					<FlatList
 						horizontal={true}
-						ref={(ref) => {
+						ref={ref => {
 							this.flatList = ref;
 						}}
 						showsHorizontalScrollIndicator={true}
 						data={this.state.url}
-						keyExtractor={(item) => item._id}
+						keyExtractor={item => item._id}
 						renderItem={this.renderItem}
 						scrollEnabled={false}
 					/>
@@ -141,9 +145,8 @@ export default class MeuVideo extends Component {
 					style={{
 						flex: 1,
 						justifyContent: 'center',
-						alignItems: 'center'
-					}}
-				>
+						alignItems: 'center',
+					}}>
 					{this.verifica()}
 				</View>
 			</View>
