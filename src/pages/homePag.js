@@ -8,7 +8,6 @@ import {
 	TouchableOpacity,
 	StyleSheet,
 	Image,
-	AsyncStorage,
 	ToastAndroid,
 	Dimensions,
 	PixelRatio,
@@ -17,6 +16,8 @@ import {
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import Slideshow from './components/Slideshow';
 import * as Animatable from 'react-native-animatable';
+
+import AsyncStorage from '@react-native-community/async-storage';
 
 const widthPercentageToDP = widthPercent => {
 	const screenWidth = Dimensions.get('window').width;
@@ -51,7 +52,7 @@ export default class Main extends Component {
 	};
 	constructor(props) {
 		super(props);
-		this.loadProducts();
+		this.loadNews();
 	}
 
 	state = {
@@ -64,7 +65,7 @@ export default class Main extends Component {
 	};
 
 	loadFile = async docs => {
-		// console.error("AQUI", docs)
+		//busca todos os arquivos de noticias
 		const doc = await Promise.all(
 			docs.map(async file => {
 				let resposta = await api.get(
@@ -111,6 +112,7 @@ export default class Main extends Component {
 	};
 
 	loadOnePageProduct = async () => {
+		//quando puxa a pag para baixo ele busca uma pag para ver se teve alteracao
 		try {
 			const response = await api.get(`/news/show?page=${1}`);
 			const {docs, ...pageInfo} = response.data;
@@ -137,9 +139,8 @@ export default class Main extends Component {
 		}
 	};
 
-	loadProducts = async (page = 1) => {
+	loadNews = async (page = 1) => {
 		//req das noticias utilizando a API
-		// console.warn("LoadProcucts")
 		try {
 			const response = await api.get(`/news/show?page=${page}`);
 			const {docs, ...pageInfo} = response.data;
@@ -168,6 +169,7 @@ export default class Main extends Component {
 	};
 
 	loadMore = () => {
+		//quando chega no final ele busca mais noticia
 		const {page, pageInfo} = this.state;
 		this.setState({refreshing: true});
 		if (page === pageInfo.pages) {
@@ -177,7 +179,7 @@ export default class Main extends Component {
 			const pageNumber = page + 1;
 
 			this.setState({page: pageNumber});
-			this.loadProducts(pageNumber);
+			this.loadNews(pageNumber);
 		}
 
 		setTimeout(() => {
@@ -195,6 +197,7 @@ export default class Main extends Component {
 	};
 
 	verifyListImage = lista => {
+		//verifica se tem image. Caso nao, ele adiciona um logo padrao para todas a noticia(toque de beleza)
 		if (lista.length === 0) {
 			const a = [1];
 			a[0] = {url: require('../image/muhna-ref.jpg')};
@@ -209,9 +212,7 @@ export default class Main extends Component {
 		<Animatable.View
 			animation="fadeIn"
 			duration={2500}
-			useNativeDriver={true}
-			// onAnimationEnd={() => {this.setState({visible:true})}}
-		>
+			useNativeDriver={true}>
 			<View style={styles.productContainer}>
 				<Text style={styles.productTitle}>{item.title || ' '}</Text>
 				<View style={styles.container2}>
@@ -280,9 +281,7 @@ export default class Main extends Component {
 		return (
 			<View style={styles.container}>
 				<StatusBar backgroundColor="white" barStyle="dark-content" />
-
 				{this.fakeLoad(3)}
-
 				<FlatList
 					contentContainerStyle={styles.list}
 					data={this.state.docs}
@@ -290,9 +289,10 @@ export default class Main extends Component {
 					renderItem={this.renderItem}
 					refreshing={this.state.refreshing}
 					onRefresh={() => {
+						// quando a pagina eh puxada para baixo ele carrega 10 noticias
 						this.loadOnePageProduct();
 					}}
-					onEndReached={this.loadMore}
+					onEndReached={this.loadMore} // quando chega em 50% do fim ele chama a funcao loadMore
 					onEndReachedThreshold={0.5}
 				/>
 			</View>

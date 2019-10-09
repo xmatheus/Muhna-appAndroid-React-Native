@@ -10,6 +10,7 @@ import {
 	ToastAndroid,
 	Image,
 	TouchableHighlight,
+	Linking,
 } from 'react-native';
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
@@ -21,8 +22,6 @@ import Dialog, {
 } from 'react-native-popup-dialog';
 
 import api from '../services/api';
-// import console = require('console');
-
 export default class pages extends PureComponent {
 	static navigationOptions = {
 		header: null,
@@ -39,40 +38,46 @@ export default class pages extends PureComponent {
 		onPop: false,
 		data: '',
 	};
+
 	onSucesso = async e => {
+		//conseguiu let o qrcode ele vai salvar os dados
 		await this.setState({data: e.data});
-		this.acessar();
+		this.filtraDados(e.data);
+	};
+
+	UNSAFE_componentWillMount = () => {
+		//ta saindo ele fecha o popup
+		this.setState({visible: false});
 	};
 
 	componentDidMount = () => {
 		const {navigation} = this.props;
 
 		navigation.addListener('willFocus', () => {
+			// entrando na tela
 			this.setState({focusedScreen: true});
 			setTimeout(() => {
 				this.setState({onScreen: true});
+				setTimeout(() => {
+					this.setState({onPop: true});
+				}, 100);
 			}, 600);
 		});
 		navigation.addListener('willBlur', () => {
-			this.setState({focusedScreen: false}),
-				this.setState({onScreen: false});
+			// saindo da tela
+			this.setState({onScreen: false, visible: false});
+			this.setState({focusedScreen: false});
+			this.setState({onScreen: false, visible: false});
 		});
 
 		setTimeout(() => {
-			this.setState({onPop: true});
-		}, 700);
-
-		setTimeout(() => {
+			//depois de 5s ele fecha o popup
 			this.setState({visible: false});
 		}, 5000);
 	};
 
-	componentWillUnmount() {
-		this.focusListener.remove();
-	}
-
 	loadFile = async docs => {
-		// console.error("AQUI", docs)
+		//busca todos os arquivos das postagens
 
 		let resposta = await api.get('/filePost/post?postid=' + docs._id + '');
 		let data = resposta.data;
@@ -103,53 +108,55 @@ export default class pages extends PureComponent {
 		docs.imageSource = imageSource;
 		docs.videoSource = videoSource;
 
+		this.setState({visible: false}); //fechando o popup antes que fique bugado
+
 		this.props.navigation.navigate('visitaGuiada', {item: docs});
 		// this.proximaPagina(docs);
 	};
 
 	buscaDados = async id => {
+		//busca a postagem
 		try {
 			const response = await api.get(`post?postid=${id}`);
 
-			const {docs, ...pageInfo} = response.data;
-			// ToastAndroid.show(docs,ToastAndroid.SHORT)
+			const {docs} = response.data;
 			this.loadFile(docs);
 		} catch (error) {
-			//se deu erro, pega do async storage e tira o skeleton
-			// const otherDocs = await JSON.parse(await AsyncStorage.getItem('docs'))
 			ToastAndroid.show(
 				'not connected to the internet',
 				ToastAndroid.SHORT,
 			);
 		}
-		// this.scanner.reactivate();
 	};
 
 	filtraDados = dados => {
+		//se tiver id no qrcode, ele vai abrir a postagem. Se for #url, ele abre o navegador
 		if (dados.startsWith('#id=')) {
 			const id = dados.split('#id=')[1]; //quebra a string e pega apenas o ID do item
 			ToastAndroid.show('Sucesso :)', ToastAndroid.SHORT);
 			this.buscaDados(id);
+		} else if (dados.startsWith('#url=')) {
+			const url = dados.split('#url=')[1]; //quebra a string e pega apenas oa url
+			Linking.openURL(url);
+			this.scanner.reactivate();
 		} else {
 			ToastAndroid.show(
 				'QR CODE invalido. Você está no MuHNA?',
 				ToastAndroid.SHORT,
 			);
+			this.scanner.reactivate();
 		}
 	};
 
-	acessar = () => {
-		// this.setState({ sucesso: false });
-		// ToastAndroid.show(this.state.data,ToastAndroid.SHORT)
-		this.filtraDados(this.state.data);
-	};
-
 	allrender = () => {
+		//toda essa funcao para o qrcode funcionar direito, ele precisa ser 'reiniciado' toda vez que a tela eh focada
 		const isFocused = this.props.navigation.isFocused();
-		// console.warn("De novo")
+
 		if (!isFocused) {
+			this.setState({visible: false});
 			return null;
 		} else if (isFocused) {
+			//code renderizado
 			return (
 				<View style={styles.container}>
 					<QRCodeScanner
@@ -161,8 +168,12 @@ export default class pages extends PureComponent {
 							this.scanner = elem;
 						}}
 					/>
-					{this.state.onPop && (
-						<View style={styles.PopContainer}>
+
+					{this.state.onPop ? ( //popup
+						<View
+							style={styles.PopContainer}
+							visible={this.state.onPop}
+							transparent={true}>
 							<Dialog
 								visible={this.state.visible}
 								onTouchOutside={() => {
@@ -206,13 +217,14 @@ export default class pages extends PureComponent {
 								</DialogContent>
 							</Dialog>
 						</View>
-					)}
+					) : null}
 				</View>
 			);
 		}
 	};
 
 	renderCamera = () => {
+		//funcao para corrigir bug da camera de nao renderizar
 		const {hasCameraPermission, focusedScreen} = this.state;
 		if (hasCameraPermission === null) {
 			return <View />;
@@ -227,6 +239,7 @@ export default class pages extends PureComponent {
 
 	render() {
 		return (
+			// parte do codigo para evitar um delay na troca de tela, ele vem pra visita guiada e mostra uma progress bar antes de mostrar o qrcode scanner
 			<View style={styles.containerGeral}>
 				<StatusBar backgroundColor="white" barStyle="dark-content" />
 				{!this.state.onScreen ? (
@@ -248,21 +261,8 @@ const styles = StyleSheet.create({
 	},
 
 	PopContainer: {
-		height: Dimensions.get('window').height * 0.8,
-		width: Dimensions.get('window').width * 0.9,
-	},
-
-	teste: {
-		flex: 1,
-		height: Dimensions.get('window').height * 0.1,
-		width: Dimensions.get('window').width * 0.3,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-
-	modal: {
-		height: Dimensions.get('window').height * 0.4,
-		width: Dimensions.get('window').width * 0.7,
+		height: Dimensions.get('window').height,
+		width: Dimensions.get('window').width,
 	},
 
 	container: {
@@ -280,10 +280,6 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: 21,
 		color: 'rgb(255,255,255)',
-	},
-
-	cameraContainer: {
-		flex: 1,
 	},
 
 	productButton: {

@@ -8,6 +8,7 @@ import {
 	ScrollView,
 	Linking,
 	PixelRatio,
+	ActivityIndicator,
 } from 'react-native';
 
 import HTML from 'react-native-render-html';
@@ -38,6 +39,7 @@ export default class pagina extends Component {
 		const {navigation} = this.props;
 		const item = navigation.getParam('item', 'no-name');
 
+		//add um borderRadius em toda as imagens
 		item.imageSource = item.imageSource.map(img => {
 			img.props = {
 				borderRadius: 10,
@@ -46,6 +48,7 @@ export default class pagina extends Component {
 			return img;
 		});
 
+		//maneira de evitar um delay na hora de let o qrcode e renderizar  a tela
 		setTimeout(() => {
 			this.setState({
 				view: (
@@ -103,21 +106,53 @@ export default class pagina extends Component {
 										<View style={styles.slideImageOne}>
 											<ImageViewer
 												imageUrls={item.imageSource}
-												backgroundColor={'#ffff'}
-												pageAnimateTime={300}
-												menus={({
-													cancel,
-													saveToLocal,
-												}) => {
-													cancel();
-												}}
-												enablePreload={true}
-												renderArrowLeft={() => {
-													<IconMat
-														name="date-range"
-														size={20}
-														color="#000"
-													/>;
+												backgroundColor={'#ffffff'}
+												pageAnimateTime={250}
+												menus={() => {}}
+												enableSwipeDown={false}
+												enablePreload={false}
+												loadingRender={() => (
+													<ActivityIndicator
+														style={{
+															justifyContent:
+																'center',
+															alignSelf: 'center',
+														}}
+														size="large"
+														color="rgba(50, 25, 1,0.9)"
+													/>
+												)}
+												renderIndicator={() => null}
+												renderFooter={currentIndex => {
+													if (currentIndex === -1) {
+														//corrgindo um bug chato
+														currentIndex = 0;
+													}
+													const allSize =
+														item.imageSource
+															.length - 1;
+													return (
+														<View
+															style={{
+																flex: 1,
+																width: dm.width,
+
+																justifyContent:
+																	'center',
+																alignItems:
+																	'center',
+															}}>
+															<Text
+																style={{
+																	textAlign:
+																		'center',
+																	color:
+																		'rgb(255, 0 , 0)',
+																}}>
+																{`${currentIndex}/${allSize}`}
+															</Text>
+														</View>
+													);
 												}}
 											/>
 										</View>
@@ -137,7 +172,7 @@ export default class pagina extends Component {
 										/>
 									</View>
 								) : null}
-								<View style={{height: 100}} />
+								<View style={{height: dm.height * 0.5}} />
 							</ScrollView>
 						</Animatable.View>
 					</View>
@@ -159,11 +194,7 @@ export default class pagina extends Component {
 	formatDate(frase) {
 		return frase.slice(0, 10);
 	}
-	componentDidMount() {
-		// setTimeout(()=>{
-		// 	this.setState({visible:false})
-		// },1000)
-	}
+
 	render() {
 		return <View style={styles.container}>{this.state.view}</View>;
 	}
@@ -266,6 +297,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		backgroundColor: '#ffff',
+		// marginBottom: 20,
 	},
 
 	slideTitle: {

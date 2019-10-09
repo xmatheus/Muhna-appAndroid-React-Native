@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 
 import {
@@ -8,7 +9,7 @@ import {
 	ScrollView,
 	Linking,
 	PixelRatio,
-	TouchableOpacity,
+	ActivityIndicator,
 } from 'react-native';
 
 import HTML from 'react-native-render-html';
@@ -20,9 +21,11 @@ import IconMat from 'react-native-vector-icons/MaterialIcons';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
 import MeuVideo from './vide';
+
 // import console = require('console');
 
 const dm = {
+	fullHeight: Dimensions.get('window').height,
 	height: Dimensions.get('window').height * 0.4,
 	width: Dimensions.get('window').width,
 };
@@ -38,13 +41,15 @@ export default class extends React.Component {
 		const {navigation} = this.props;
 		const item = navigation.getParam('item', 'no-name');
 
+		//add um borderRadius em toda as imagens
 		item.imageSource = item.imageSource.map(img => {
 			img.props = {
 				borderRadius: 10,
 			};
-			// img.width = dm.width
 			return img;
 		});
+
+		//maneira de evitar um delay na hora de let o qrcode e renderizar  a tela
 		setTimeout(() => {
 			this.setState({
 				view: (
@@ -79,12 +84,17 @@ export default class extends React.Component {
 
 						<ScrollView style={styles.scroll}>
 							<HTML
-								html={'<div>' + item.news + '</div>'}
+								// html={'<div>' + item.news + '</div>'}
+								html={item.news}
 								tagsStyles={tagsStyles}
 								onLinkPress={(evt, href) => {
 									Linking.openURL(href);
 								}}
 								textSelectable={true}
+								imagesInitialDimensions={{
+									height: dm.height,
+									width: dm.height,
+								}}
 							/>
 
 							{item.imageSource.length > 0 ? (
@@ -94,21 +104,56 @@ export default class extends React.Component {
 											Imagens
 										</Text>
 									</View>
+
 									<View style={styles.slideImageOne}>
 										<ImageViewer
 											imageUrls={item.imageSource}
-											backgroundColor={'#ffff'}
-											pageAnimateTime={300}
-											menus={({cancel, saveToLocal}) => {
-												cancel();
-											}}
-											enablePreload={true}
-											renderArrowLeft={() => {
-												<IconMat
-													name="date-range"
-													size={20}
-													color="#000"
-												/>;
+											backgroundColor={'#ffffff'}
+											pageAnimateTime={250}
+											menus={() => {}}
+											enableSwipeDown={false}
+											enablePreload={false}
+											loadingRender={() => (
+												<ActivityIndicator
+													style={{
+														justifyContent:
+															'center',
+														alignSelf: 'center',
+													}}
+													size="large"
+													color="rgba(50, 25, 1,0.9)"
+												/>
+											)}
+											renderIndicator={() => null}
+											renderFooter={currentIndex => {
+												if (currentIndex === -1) {
+													//corrgindo um bug chato
+													currentIndex = 0;
+												}
+												const allSize =
+													item.imageSource.length - 1;
+												return (
+													<View
+														style={{
+															flex: 1,
+															width: dm.width,
+
+															justifyContent:
+																'center',
+															alignItems:
+																'center',
+														}}>
+														<Text
+															style={{
+																textAlign:
+																	'center',
+																color:
+																	'rgb(255, 0 , 0)',
+															}}>
+															{`${currentIndex}/${allSize}`}
+														</Text>
+													</View>
+												);
 											}}
 										/>
 									</View>
@@ -133,13 +178,6 @@ export default class extends React.Component {
 			});
 			this.setState({visible: false});
 		}, 1);
-
-		ajustImage = images => {
-			const posImage = images.map(img => {
-				return {uri: img.url};
-			});
-			return posImage;
-		};
 	}
 	static navigationOptions = ({navigation}) => {
 		return {
@@ -154,11 +192,7 @@ export default class extends React.Component {
 	formatDate(frase) {
 		return frase.slice(0, 10);
 	}
-	componentDidMount() {
-		// setTimeout(()=>{
-		// 	this.setState({visible:false})
-		// },1000)
-	}
+
 	render() {
 		return <View style={styles.container}>{this.state.view}</View>;
 	}
@@ -183,6 +217,10 @@ const tagsStyles = {
 	},
 	h3: {
 		textAlign: 'center',
+	},
+	img: {
+		width: 500,
+		height: 500,
 	},
 };
 

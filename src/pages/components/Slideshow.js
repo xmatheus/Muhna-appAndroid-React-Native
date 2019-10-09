@@ -8,6 +8,7 @@ import {StyleSheet} from 'react-native';
 export default class SlideshowTest extends Component {
 	constructor(props) {
 		super(props);
+
 		this.state = {
 			position: 0,
 			interval: null,
@@ -38,7 +39,11 @@ export default class SlideshowTest extends Component {
 	render() {
 		return (
 			<Slideshow
-				dataSource={this.state.dataSource}
+				dataSource={
+					this.state.qtdImage > 3
+						? this.state.dataSource.slice(0, 3)
+						: this.state.dataSource
+				}
 				position={this.state.position}
 				onPositionChanged={position => this.setState({position})}
 				arrowSize={0}
@@ -55,7 +60,7 @@ const styles = StyleSheet.create({
 	image: {
 		borderRadius: 7,
 		backgroundColor: '#fff',
-		marginRight: 5,
+		// marginRight: 5,
 	},
 	containerStyle: {
 		backgroundColor: '#fff',

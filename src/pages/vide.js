@@ -16,30 +16,18 @@ const dm = {
 	width: Dimensions.get('window').width,
 };
 
-// {
-// 	uri:
-// 		'https://muhna-api.herokuapp.com/filePost/video?filename=7ed14ef173dcbcb78aeffc02f8078450.mp4',
-// 	_id: '1'
-// },
-// {
-// 	uri:
-// 		'https://muhna-api.herokuapp.com/filePost/video?filename=f68b3ec4d803ef94b1068de8d669f4ba.mp4',
-// 	_id: '2'
-// }
 export default class MeuVideo extends Component {
 	constructor(props) {
 		super(props);
-
-		// this.verifica = this.verifica.bind(this);
-		// this.proximo = this.proximo.bind(this);
-		// this.anterior = this.anterior.bind(this);
 	}
+
 	state = {
 		url: [],
 		max: 0,
 		pos: 0,
 	};
 
+	//renderiza o video player
 	renderItem = ({item}) => (
 		<VideoPlayer
 			style={{
@@ -55,8 +43,9 @@ export default class MeuVideo extends Component {
 			videoStyle={{backgroundColor: '#000'}}
 		/>
 	);
-	// _flatList = () => {};
+
 	componentDidMount = () => {
+		//pega as urls dos videos
 		const {navigation} = this.props;
 		const item =
 			this.props.videoSource ||
@@ -69,6 +58,7 @@ export default class MeuVideo extends Component {
 	};
 
 	proximo = () => {
+		//funcao para trocar os videos
 		if (this.flatList != (undefined || null)) {
 			if (this.state.pos === this.state.max) {
 				this.setState({pos: 0});
@@ -83,6 +73,7 @@ export default class MeuVideo extends Component {
 	};
 
 	anterior() {
+		//funcao para trocar os videos
 		if (this.flatList != (undefined || null)) {
 			if (this.state.pos === 0) {
 				this.setState({pos: this.state.max});
@@ -97,8 +88,9 @@ export default class MeuVideo extends Component {
 	}
 
 	verifica = () => {
+		//se tem mais que um video, ele add setas para controle de qual deseja ser visto
 		if (
-			this.state.url != (undefined || null) &&
+			this.state.url !== (undefined || null) &&
 			this.state.url.length > 1
 		) {
 			return (

@@ -71,8 +71,8 @@ const tabs = createMaterialBottomTabNavigator(
 					</View>
 				),
 				activeColor: '#ffff',
-				inactiveColor: 'rgba(255,255,255,0.3)',
-				barStyle: {backgroundColor: 'rgb(0, 128, 0)'},
+				inactiveColor: 'rgba(255,255,255,0.5)',
+				barStyle: {backgroundColor: 'rgb(139, 0, 0)'},
 			},
 		},
 	},
