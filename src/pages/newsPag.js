@@ -8,6 +8,7 @@ import {
 	Dimensions,
 	ScrollView,
 	Linking,
+	Image,
 	PixelRatio,
 	ActivityIndicator,
 } from 'react-native';
@@ -30,11 +31,6 @@ const dm = {
 	width: Dimensions.get('window').width,
 };
 
-Dimensions.addEventListener('change', dimensions => {
-	dm.width = dimensions.window.width;
-	dm.height = dimensions.window.height * 0.4;
-});
-
 export default class extends React.Component {
 	constructor(props) {
 		super(props);
@@ -49,7 +45,35 @@ export default class extends React.Component {
 			return img;
 		});
 
+		Dimensions.addEventListener('change', e => {
+			console.warn(dm);
+			dm.height = Dimensions.get('window').height * 0.4;
+			dm.width = Dimensions.get('window').width;
+			console.warn(dm);
+		});
+
+		/*  essa parte resolve um problema de resize nas imagens renderizadas no html */
+		const HTMLStyles = {
+			img: {marginBottom: 10, marginTop: 10},
+		};
+		const defaultRenderer = {
+			renderers: {
+				img: (htmlAttribs, children, convertedCSSStyles, passProps) => (
+					<Image
+						key={passProps.key}
+						style={{
+							width: dm.width,
+							height: dm.height,
+						}}
+						source={{uri: htmlAttribs.src}}
+						resizeMode="contain"
+					/>
+				),
+			},
+		};
+
 		//maneira de evitar um delay na hora de let o qrcode e renderizar  a tela
+
 		setTimeout(() => {
 			this.setState({
 				view: (
@@ -91,10 +115,14 @@ export default class extends React.Component {
 									Linking.openURL(href);
 								}}
 								textSelectable={true}
-								imagesInitialDimensions={{
-									height: dm.height,
-									width: dm.height,
-								}}
+								imagesMaxWidth={Dimensions.get('window').width}
+								// imagesInitialDimensions={{
+								// 	height: dm.height,
+								// 	width: dm.width,
+								// }}
+								// eslint-disable-next-line react/jsx-no-duplicate-props
+								tagsStyles={HTMLStyles}
+								{...defaultRenderer}
 							/>
 
 							{item.imageSource.length > 0 ? (
@@ -179,22 +207,40 @@ export default class extends React.Component {
 			this.setState({visible: false});
 		}, 1);
 	}
+
+	onLayout = () => {
+		dm.height = Dimensions.get('window').height * 0.4;
+		dm.width = Dimensions.get('window').width;
+	};
+
 	static navigationOptions = ({navigation}) => {
 		return {
 			title: navigation.getParam('name', ''),
 			textAlign: 'center',
 		};
 	};
+
 	state = {
 		visible: true,
 	};
+
+	onLayout(e) {
+		this.setState({
+			width: Dimensions.get('window').width,
+			height: Dimensions.get('window').height,
+		});
+	}
 
 	formatDate(frase) {
 		return frase.slice(0, 10);
 	}
 
 	render() {
-		return <View style={styles.container}>{this.state.view}</View>;
+		return (
+			<View style={styles.container} onLayout={this.onLayout}>
+				{this.state.view}
+			</View>
+		);
 	}
 }
 

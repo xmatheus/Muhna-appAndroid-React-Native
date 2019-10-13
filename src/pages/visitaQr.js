@@ -45,10 +45,10 @@ export default class pages extends PureComponent {
 		this.filtraDados(e.data);
 	};
 
-	UNSAFE_componentWillMount = () => {
-		//ta saindo ele fecha o popup
-		this.setState({visible: false});
-	};
+	// UNSAFE_componentWillMount = () => {
+	// 	//ta saindo ele fecha o popup
+	// 	this.setState({visible: false});
+	// };
 
 	componentDidMount = () => {
 		const {navigation} = this.props;
@@ -58,16 +58,18 @@ export default class pages extends PureComponent {
 			this.setState({focusedScreen: true});
 			setTimeout(() => {
 				this.setState({onScreen: true});
-				setTimeout(() => {
-					this.setState({onPop: true});
-				}, 100);
 			}, 600);
+			setTimeout(() => {
+				this.setState({onPop: true});
+			}, 700);
 		});
 		navigation.addListener('willBlur', () => {
 			// saindo da tela
-			this.setState({onScreen: false, visible: false});
-			this.setState({focusedScreen: false});
-			this.setState({onScreen: false, visible: false});
+			this.setState({
+				onScreen: false,
+				visible: false,
+				focusedScreen: false,
+			});
 		});
 
 		setTimeout(() => {
@@ -169,55 +171,44 @@ export default class pages extends PureComponent {
 						}}
 					/>
 
-					{this.state.onPop ? ( //popup
-						<View
-							style={styles.PopContainer}
-							visible={this.state.onPop}
-							transparent={true}>
-							<Dialog
-								visible={this.state.visible}
-								onTouchOutside={() => {
-									this.setState({visible: false});
-								}}
-								dialogAnimation={
-									new SlideAnimation({
-										slideFrom: 'bottom',
-									})
-								}
-								dialogTitle={
-									<DialogTitle title="Como usar?" />
-								}>
-								<DialogContent>
-									<View
-										style={{
-											flexDirection: 'column',
-											alignItems: 'center',
-											justifyContent: 'center',
-										}}>
-										<Text>
-											Aponte a câmera para o QR code de
-											algum item do acervo
-										</Text>
-										<Image
-											style={{height: 400, width: 200}}
-											source={
-												(uri = require('../image/exemplo.png'))
-											}
-										/>
-										<TouchableHighlight
-											style={styles.popButton}
-											onPress={() => {
-												this.setState({visible: false});
-											}}>
-											<Text style={styles.text}>
-												Fechar
-											</Text>
-										</TouchableHighlight>
-									</View>
-								</DialogContent>
-							</Dialog>
-						</View>
-					) : null}
+					<Dialog
+						visible={this.state.visible}
+						onTouchOutside={() => {
+							this.setState({visible: false});
+						}}
+						dialogAnimation={
+							new SlideAnimation({
+								slideFrom: 'bottom',
+							})
+						}
+						dialogTitle={<DialogTitle title="Como usar?" />}>
+						<DialogContent>
+							<View
+								style={{
+									flexDirection: 'column',
+									alignItems: 'center',
+									justifyContent: 'center',
+								}}>
+								<Text>
+									Aponte a câmera para o QR code de algum item
+									do acervo
+								</Text>
+								<Image
+									style={{height: 400, width: 200}}
+									source={
+										(uri = require('../image/exemplo.png'))
+									}
+								/>
+								<TouchableHighlight
+									style={styles.popButton}
+									onPress={() => {
+										this.setState({visible: false});
+									}}>
+									<Text style={styles.text}>Fechar</Text>
+								</TouchableHighlight>
+							</View>
+						</DialogContent>
+					</Dialog>
 				</View>
 			);
 		}

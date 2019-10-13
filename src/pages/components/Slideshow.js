@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
 	image: {
 		borderRadius: 7,
 		backgroundColor: '#fff',
+		resizeMode: 'cover',
 		// marginRight: 5,
 	},
 	containerStyle: {
