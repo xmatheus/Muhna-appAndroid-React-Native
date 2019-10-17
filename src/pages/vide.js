@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/prefer-stateless-function */
 // "https://muhna-api.herokuapp.com/file/video?filename=42b787cd912302a5b2997e5d7262927f.mp4"
 
@@ -6,6 +7,8 @@ import React, {Component} from 'react';
 import {View, Dimensions, FlatList, TouchableOpacity} from 'react-native';
 
 import VideoPlayer from 'react-native-video-controls';
+
+import {WebView} from 'react-native-webview';
 
 import Icon from 'react-native-vector-icons/AntDesign';
 
@@ -29,31 +32,44 @@ export default class MeuVideo extends Component {
 
 	//renderiza o video player
 	renderItem = ({item}) => (
-		<VideoPlayer
-			style={{
-				width: dm.width,
-				backgroundColor: '#000',
-			}}
-			source={{
-				uri: item.url,
-			}}
-			disableVolume={true}
-			disableBack={true}
-			paused={true}
-			videoStyle={{backgroundColor: '#000'}}
-		/>
+		<>
+			{item.link ? (
+				<View style={{width: dm.width}}>
+					<WebView
+						style={{marginTop: 10}}
+						javaScriptEnabled={true}
+						domStorageEnabled={true}
+						source={{uri: item.link}}
+					/>
+				</View>
+			) : (
+				<VideoPlayer
+					style={{
+						width: dm.width,
+						backgroundColor: '#000',
+					}}
+					source={{
+						uri: item.url,
+					}}
+					disableVolume={true}
+					disableBack={true}
+					paused={true}
+					videoStyle={{backgroundColor: '#000'}}
+				/>
+			)}
+		</>
 	);
 
 	componentDidMount = () => {
-		//pega as urls dos videos
+		// pega as urls dos videos
 		const {navigation} = this.props;
 		const item =
 			this.props.videoSource ||
 			navigation.getParam('videoSource', 'no-name');
 
+		item.push({link: 'https://www.youtube.com/embed/R0tHEJl_Y8E'});
 		if (item != (undefined || null)) {
-			this.setState({url: item});
-			this.setState({pos: 0, max: item.length - 1});
+			this.setState({url: item, pos: 0, max: item.length - 1});
 		}
 	};
 

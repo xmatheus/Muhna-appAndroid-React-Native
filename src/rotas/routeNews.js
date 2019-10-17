@@ -1,6 +1,6 @@
 import {createStackNavigator} from 'react-navigation-stack';
-import Main from '../pages/homePag';
-import pag from '../pages/newsPag';
+import Main from '../pages/homePage';
+import pag from '../pages/newsPage';
 import pagina from '../pages/postPage';
 import MeuVideo from '../pages/vide';
 
