@@ -64,6 +64,28 @@ export default class Main extends Component {
 		refreshing: false,
 	};
 
+	changeLink = link => {
+		const correctLink = link.map(olink => {
+			console.log('links', olink);
+			if (olink.link.includes('watch?v=')) {
+				//link no formato errado, precisa arrumar
+				console.log('arrumar', olink);
+				const a = olink.link.split('watch?v=');
+				olink.link = `https://www.youtube.com/embed/${a[1]}`;
+				console.log('certo', olink);
+				return olink;
+			} else if (olink.link.includes('embed')) {
+				// link no formato correto
+				console.log('embed', olink);
+				return olink;
+			} else {
+				//link errado nao sei arrumar :|
+			}
+		});
+
+		return correctLink;
+	};
+
 	loadFile = async docs => {
 		//busca todos os arquivos de noticias
 		const doc = await Promise.all(
@@ -73,7 +95,7 @@ export default class Main extends Component {
 				);
 				let data = resposta.data;
 
-				const {image, video} = data;
+				const {image, video, link} = data;
 
 				const imageSource = image.map(data => {
 					return {
@@ -97,7 +119,15 @@ export default class Main extends Component {
 				});
 
 				file.imageSource = imageSource;
-				file.videoSource = videoSource;
+
+				// console.log('\n\nLINK->', link);
+				// console.log('\n\nVideo->', videoSource);
+				if (link !== undefined && link !== null) {
+					const embedLink = this.changeLink(link);
+					file.videoSource = [...videoSource, ...embedLink]; //juntando os dois
+				} else {
+					file.videoSource = videoSource;
+				}
 
 				return file;
 			}),

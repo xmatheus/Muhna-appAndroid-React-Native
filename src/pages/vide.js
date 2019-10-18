@@ -35,6 +35,7 @@ export default class MeuVideo extends Component {
 		<>
 			{item.link ? (
 				<View style={{width: dm.width}}>
+					{console.log(item.link)}
 					<WebView
 						style={{marginTop: 10}}
 						javaScriptEnabled={true}
@@ -67,7 +68,6 @@ export default class MeuVideo extends Component {
 			this.props.videoSource ||
 			navigation.getParam('videoSource', 'no-name');
 
-		item.push({link: 'https://www.youtube.com/embed/R0tHEJl_Y8E'});
 		if (item != (undefined || null)) {
 			this.setState({url: item, pos: 0, max: item.length - 1});
 		}

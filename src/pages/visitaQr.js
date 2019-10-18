@@ -79,13 +79,35 @@ export default class pages extends PureComponent {
 		}, 5000);
 	};
 
+	changeLink = link => {
+		const correctLink = link.map(olink => {
+			console.log('links', olink);
+			if (olink.link.includes('watch?v=')) {
+				//link no formato errado, precisa arrumar
+				console.log('arrumar', olink);
+				const a = olink.link.split('watch?v=');
+				olink.link = `https://www.youtube.com/embed/${a[1]}`;
+				console.log('certo', olink);
+				return olink;
+			} else if (olink.link.includes('embed')) {
+				// link no formato correto
+				console.log('embed', olink);
+				return olink;
+			} else {
+				//link errado nao sei arrumar :|
+			}
+		});
+
+		return correctLink;
+	};
+
 	loadFile = async docs => {
 		//busca todos os arquivos das postagens
 
 		let resposta = await api.get('/filePost/post?postid=' + docs._id + '');
 		let data = resposta.data;
 
-		const {image, video} = data;
+		const {image, video, link} = data;
 
 		const imageSource = image.map(data => {
 			return {
@@ -109,7 +131,13 @@ export default class pages extends PureComponent {
 		});
 
 		docs.imageSource = imageSource;
-		docs.videoSource = videoSource;
+
+		if (link !== undefined && link !== null) {
+			const embedLink = this.changeLink(link);
+			docs.videoSource = [...videoSource, ...embedLink]; //juntando os dois
+		} else {
+			docs.videoSource = videoSource;
+		}
 
 		this.setState({visible: false}); //fechando o popup antes que fique bugado
 
