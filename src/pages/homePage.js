@@ -40,7 +40,7 @@ const ActionBarImage = () => {
 			<Image
 				style={styles.Image}
 				// eslint-disable-next-line no-undef
-				source={(uri = require('../image/logo.png'))}
+				source={(uri = require('../assets/logo.png'))}
 			/>
 		</View>
 	);
@@ -230,7 +230,7 @@ export default class Main extends Component {
 		//verifica se tem image. Caso nao, ele adiciona um logo padrao para todas a noticia(toque de beleza)
 		if (lista.length === 0) {
 			const a = [1];
-			a[0] = {url: require('../image/muhna-ref.jpg')};
+			a[0] = {url: require('../assets/muhna-ref.jpg')};
 			return a;
 		}
 		return lista;

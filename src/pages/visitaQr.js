@@ -22,6 +22,8 @@ import Dialog, {
 	SlideAnimation,
 } from 'react-native-popup-dialog';
 
+import LottieView from 'lottie-react-native';
+
 import api from '../services/api';
 export default class pages extends PureComponent {
 	static navigationOptions = {
@@ -62,7 +64,7 @@ export default class pages extends PureComponent {
 			}, 600);
 			setTimeout(() => {
 				this.setState({onPop: true});
-			}, 700);
+			}, 2000);
 		});
 		navigation.addListener('willBlur', () => {
 			// saindo da tela
@@ -73,10 +75,10 @@ export default class pages extends PureComponent {
 			});
 		});
 
-		setTimeout(() => {
-			//depois de 5s ele fecha o popup
-			this.setState({visible: false});
-		}, 5000);
+		// setTimeout(() => {
+		// 	//depois de 5s ele fecha o popup
+		// 	this.setState({visible: false});
+		// }, 8250);
 	};
 
 	changeLink = link => {
@@ -222,11 +224,18 @@ export default class pages extends PureComponent {
 									Aponte a câmera para o QR code de algum item
 									do acervo
 								</Text>
-								<Image
+								{/* <Image
 									style={{height: 400, width: 200}}
 									source={
 										(uri = require('../image/exemplo.png'))
 									}
+								/> */}
+								<LottieView
+									style={{height: 400, width: 200}}
+									resizeMode="contain"
+									source={require('../assets/animation.json')}
+									autoPlay
+									loop
 								/>
 								<TouchableHighlight
 									style={styles.popButton}

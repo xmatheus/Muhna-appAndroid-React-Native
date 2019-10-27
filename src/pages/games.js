@@ -1,7 +1,10 @@
 /* eslint-disable react/prefer-stateless-function */
 import React, {Component} from 'react';
 
-import {View, StyleSheet, Image, Text} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
+
+import LottieView from 'lottie-react-native';
+import {useScreens} from 'react-native-screens';
 
 // import { Container } from './styles';
 
@@ -10,9 +13,12 @@ export default class pages extends Component {
 		return (
 			<View style={styles.containerGeral}>
 				<Text style={styles.title}>Em desenvolvimento</Text>
-				<Image
-					style={styles.image}
-					source={require('../image/logoDefault.png')}
+				<LottieView
+					style={{height: 400, width: 200}}
+					resizeMode="contain"
+					source={require('../assets/maintenance.json')}
+					autoPlay
+					loop
 				/>
 			</View>
 		);
