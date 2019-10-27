@@ -66,17 +66,13 @@ export default class Main extends Component {
 
 	changeLink = link => {
 		const correctLink = link.map(olink => {
-			console.log('links', olink);
 			if (olink.link.includes('watch?v=')) {
 				//link no formato errado, precisa arrumar
-				console.log('arrumar', olink);
 				const a = olink.link.split('watch?v=');
 				olink.link = `https://www.youtube.com/embed/${a[1]}`;
-				console.log('certo', olink);
 				return olink;
 			} else if (olink.link.includes('embed')) {
 				// link no formato correto
-				console.log('embed', olink);
 				return olink;
 			} else {
 				//link errado nao sei arrumar :|
@@ -120,8 +116,6 @@ export default class Main extends Component {
 
 				file.imageSource = imageSource;
 
-				// console.log('\n\nLINK->', link);
-				// console.log('\n\nVideo->', videoSource);
 				if (link !== undefined && link !== null) {
 					const embedLink = this.changeLink(link);
 					file.videoSource = [...videoSource, ...embedLink]; //juntando os dois

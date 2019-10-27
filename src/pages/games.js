@@ -4,7 +4,14 @@
 
 import React, {Component} from 'react';
 
-import {View, StyleSheet, Text, Dimensions, Linking} from 'react-native';
+import {
+	View,
+	StyleSheet,
+	Text,
+	Dimensions,
+	Linking,
+	TouchableOpacity,
+} from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
@@ -20,6 +27,14 @@ const dm = {
 // import { Container } from './styles';
 
 export default class pages extends Component {
+	componentDidMount = () => {
+		this.play();
+	};
+
+	play = () => {
+		this.animation.play();
+	};
+
 	render() {
 		return (
 			<View style={styles.containerGeral}>
@@ -33,6 +48,7 @@ export default class pages extends Component {
 								textAlign: 'left',
 								color: '#ffff',
 								paddingBottom: 7,
+								fontWeight: 'bold',
 							}}>
 							Orientador:
 						</Text>
@@ -44,10 +60,25 @@ export default class pages extends Component {
 								marginBottom: 10,
 								marginLeft: 15,
 							}}>
-							<Icon
+							{/* <Icon
 								style={[{color: '#fafafa', marginRight: 10}]}
 								size={19}
 								name={'user-astronaut'}
+							/> */}
+							<LottieView
+								style={{
+									height: 25,
+									width: 30,
+									// marginRight: 10,
+									// marginBottom: 5,
+								}}
+								resizeMode="contain"
+								source={require('../assets/ninja.json')}
+								// ref={animation => {
+								// 	this.animation = animation;
+								// }}
+								autoPlay
+								loop={true}
 							/>
 							<Text style={{color: '#fff'}}>
 								Ivairton Monteiro Santos
@@ -62,10 +93,25 @@ export default class pages extends Component {
 								marginBottom: 20,
 								marginLeft: 15,
 							}}>
-							<IconFontisto
+							{/* <IconFontisto
 								style={[{color: '#fafafa', marginRight: 10}]}
 								size={19}
 								name={'email'}
+							/> */}
+							<LottieView
+								style={{
+									height: 35,
+									width: 28,
+									// marginRight: 10,
+									// marginBottom: 5,
+								}}
+								resizeMode="contain"
+								source={require('../assets/mail.json')}
+								// ref={animation => {
+								// 	this.animation = animation;
+								// }}
+								autoPlay
+								loop={true}
 							/>
 							<Text style={{color: '#fff'}}>
 								ivairton@ufmt.br
@@ -77,6 +123,7 @@ export default class pages extends Component {
 								textAlign: 'left',
 								color: '#ffff',
 								paddingBottom: 7,
+								fontWeight: 'bold',
 							}}>
 							Orientando:
 						</Text>
@@ -88,10 +135,25 @@ export default class pages extends Component {
 								marginBottom: 5,
 								marginLeft: 15,
 							}}>
-							<Icon
+							{/* <Icon
 								style={[{color: '#fafafa', marginRight: 10}]}
 								size={19}
 								name={'user-astronaut'}
+							/> */}
+							<LottieView
+								style={{
+									height: 25,
+									width: 30,
+									// marginRight: 10,
+									// marginBottom: 5,
+								}}
+								resizeMode="contain"
+								source={require('../assets/ninja.json')}
+								// ref={animation => {
+								// 	this.animation = animation;
+								// }}
+								autoPlay
+								loop={true}
 							/>
 							<Text style={{color: '#fff'}}>
 								Matheus Felipe T. Correia
@@ -105,10 +167,20 @@ export default class pages extends Component {
 								marginBottom: 20,
 								marginLeft: 15,
 							}}>
-							<IconFontisto
-								style={[{color: '#fafafa', marginRight: 10}]}
-								size={19}
-								name={'email'}
+							<LottieView
+								style={{
+									height: 35,
+									width: 28,
+									// marginRight: 10,
+									// marginBottom: 5,
+								}}
+								resizeMode="contain"
+								source={require('../assets/mail.json')}
+								// ref={animation => {
+								// 	this.animation = animation;
+								// }}
+								autoPlay
+								loop={true}
 							/>
 							<Text style={{color: '#fff'}}>
 								matheuscorreia559@gmail.com
@@ -121,10 +193,25 @@ export default class pages extends Component {
 								flexDirection: 'row',
 								alignItems: 'center',
 							}}>
-							<Icon
+							{/* <Icon
 								style={[{color: '#fafafa', marginRight: 10}]}
 								size={19}
 								name={'github'}
+							/> */}
+							<LottieView
+								style={{
+									height: 30,
+									width: 28,
+									marginRight: 5,
+									// marginBottom: 5,
+								}}
+								resizeMode="contain"
+								source={require('../assets/git.json')}
+								// ref={animation => {
+								// 	this.animation = animation;
+								// }}
+								autoPlay
+								loop={true}
 							/>
 							<Text
 								style={{
@@ -141,13 +228,25 @@ export default class pages extends Component {
 						</View>
 					</View>
 				</View>
-				<LottieView
-					style={{height: 400, width: 200}}
-					resizeMode="contain"
-					source={require('../assets/urso.json')}
-					autoPlay
-					loop
-				/>
+				<TouchableOpacity
+					style={{
+						flex: 1,
+						justifyContent: 'center',
+						alignItems: 'center',
+					}}
+					onPress={() => {
+						this.play();
+					}}>
+					<LottieView
+						style={{flex: 1, width: 200}}
+						resizeMode="contain"
+						source={require('../assets/urso.json')}
+						ref={animation => {
+							this.animation = animation;
+						}}
+						loop={true}
+					/>
+				</TouchableOpacity>
 			</View>
 		);
 	}
@@ -173,6 +272,6 @@ const styles = StyleSheet.create({
 		paddingTop: 10,
 		backgroundColor: '#4d2600',
 		borderRadius: 4,
-		width: dm.width * 0.8,
+		marginTop: 50,
 	},
 });

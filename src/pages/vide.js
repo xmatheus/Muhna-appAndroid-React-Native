@@ -35,7 +35,6 @@ export default class MeuVideo extends Component {
 		<>
 			{item.link ? (
 				<View style={{width: dm.width}}>
-					{console.log(item.link)}
 					<WebView
 						style={{marginTop: 10}}
 						javaScriptEnabled={true}
