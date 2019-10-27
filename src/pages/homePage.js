@@ -142,13 +142,18 @@ export default class Main extends Component {
 	};
 
 	loadOnePageProduct = async () => {
+		this.setState({refreshing: true});
 		//quando puxa a pag para baixo ele busca uma pag para ver se teve alteracao
 		try {
-			const response = await api.get(`/news/show?page=${1}`);
-			const {docs, ...pageInfo} = response.data;
-			this.setState({pageInfo});
-			this.loadFile(docs);
+			api.get(`/news/show?page=${1}`).then(response => {
+				this.setState({refreshing: false});
+				const {docs, ...pageInfo} = response.data;
+				this.setState({pageInfo});
+				this.loadFile(docs);
+			});
 		} catch (error) {
+			this.setState({refreshing: false});
+
 			//se deu erro, pega do async storage e tira o skeleton
 			const otherDocs = await JSON.parse(
 				await AsyncStorage.getItem('docs'),

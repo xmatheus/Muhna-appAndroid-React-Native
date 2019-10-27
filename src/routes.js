@@ -12,6 +12,8 @@ import Icon from 'react-native-vector-icons/Entypo';
 
 import IconAnt from 'react-native-vector-icons/AntDesign';
 
+import IconFoundation from 'react-native-vector-icons/Foundation';
+
 import main from './rotas/routeNews';
 
 import visita from './rotas/routeVisita';
@@ -63,16 +65,16 @@ const tabs = createMaterialBottomTabNavigator(
 				tabBarLabel: ' ',
 				tabBarIcon: ({tintColor}) => (
 					<View>
-						<Icon
+						<IconFoundation
 							style={[{color: tintColor}]}
 							size={25}
-							name={'game-controller'}
+							name={'info'}
 						/>
 					</View>
 				),
 				activeColor: '#ffff',
 				inactiveColor: 'rgba(255,255,255,0.5)',
-				barStyle: {backgroundColor: 'rgb(139, 0, 0)'},
+				barStyle: {backgroundColor: '#4d2600'},
 			},
 		},
 	},

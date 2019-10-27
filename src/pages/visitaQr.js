@@ -9,8 +9,7 @@ import {
 	Text,
 	ProgressBarAndroid,
 	ToastAndroid,
-	Image,
-	TouchableHighlight,
+	TouchableOpacity,
 	Linking,
 } from 'react-native';
 
@@ -48,11 +47,6 @@ export default class pages extends PureComponent {
 		this.filtraDados(e.data);
 	};
 
-	// UNSAFE_componentWillMount = () => {
-	// 	//ta saindo ele fecha o popup
-	// 	this.setState({visible: false});
-	// };
-
 	componentDidMount = () => {
 		const {navigation} = this.props;
 
@@ -74,11 +68,6 @@ export default class pages extends PureComponent {
 				focusedScreen: false,
 			});
 		});
-
-		// setTimeout(() => {
-		// 	//depois de 5s ele fecha o popup
-		// 	this.setState({visible: false});
-		// }, 8250);
 	};
 
 	changeLink = link => {
@@ -237,13 +226,13 @@ export default class pages extends PureComponent {
 									autoPlay
 									loop
 								/>
-								<TouchableHighlight
+								<TouchableOpacity
 									style={styles.popButton}
 									onPress={() => {
 										this.setState({visible: false});
 									}}>
 									<Text style={styles.text}>Fechar</Text>
-								</TouchableHighlight>
+								</TouchableOpacity>
 							</View>
 						</DialogContent>
 					</Dialog>
@@ -334,7 +323,10 @@ const styles = StyleSheet.create({
 		backgroundColor: '#4d2600',
 		justifyContent: 'center',
 		alignItems: 'center',
-		padding: 3,
+		paddingTop: 3,
+		paddingBottom: 3,
+		paddingRight: 7,
+		paddingLeft: 7,
 		marginTop: 20,
 	},
 });
