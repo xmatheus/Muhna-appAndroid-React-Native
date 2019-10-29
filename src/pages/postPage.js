@@ -48,6 +48,25 @@ export default class pagina extends Component {
 			return img;
 		});
 
+		const HTMLStyles = {
+			img: {marginBottom: 10, marginTop: 10},
+		};
+		const defaultRenderer = {
+			renderers: {
+				img: (htmlAttribs, children, convertedCSSStyles, passProps) => (
+					<Image
+						key={passProps.key}
+						style={{
+							width: dm.width,
+							height: dm.height,
+						}}
+						source={{uri: htmlAttribs.src}}
+						resizeMode="contain"
+					/>
+				),
+			},
+		};
+
 		//maneira de evitar um delay na hora de let o qrcode e renderizar  a tela
 		setTimeout(() => {
 			this.setState({
@@ -89,11 +108,15 @@ export default class pagina extends Component {
 							<ScrollView style={styles.scroll}>
 								<HTML
 									html={'<div>' + item.post + '</div>'}
-									tagsStyles={tagsStyles}
 									onLinkPress={(evt, href) => {
 										Linking.openURL(href);
 									}}
+									imagesMaxWidth={
+										Dimensions.get('window').width
+									}
 									textSelectable={true}
+									tagsStyles={HTMLStyles}
+									{...defaultRenderer}
 								/>
 
 								{item.imageSource.length > 0 ? (
